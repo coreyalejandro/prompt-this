@@ -58,6 +58,11 @@ class AgentType(str, Enum):
     SELF_CONSISTENCY = "self_consistency"
     TREE_OF_THOUGHTS = "tree_of_thoughts"
     REACT = "react"
+    # Advanced agents
+    RAG = "rag"
+    AUTO_PROMPT = "auto_prompt"
+    PROGRAM_AIDED = "program_aided"
+    FACTUALITY_CHECKER = "factuality_checker"
 
 class LLMProvider(str, Enum):
     OPENAI = "openai"
