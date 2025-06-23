@@ -133,7 +133,11 @@ class BaseAgent:
             AgentType.CHAIN_OF_THOUGHT: "Breaks down complex problems into step-by-step reasoning",
             AgentType.SELF_CONSISTENCY: "Generates multiple reasoning paths and selects the most consistent answer",
             AgentType.TREE_OF_THOUGHTS: "Explores multiple reasoning branches like a search tree",
-            AgentType.REACT: "Combines reasoning and action-taking capabilities"
+            AgentType.REACT: "Combines reasoning and action-taking capabilities",
+            AgentType.RAG: "Retrieval Augmented Generation - combines external knowledge with generation",
+            AgentType.AUTO_PROMPT: "Automatically optimizes and refines prompts for better results",
+            AgentType.PROGRAM_AIDED: "Uses code generation and execution to solve complex problems",
+            AgentType.FACTUALITY_CHECKER: "Validates the factual accuracy of generated content"
         }
         return descriptions.get(self.agent_type, "Specialized prompt engineering agent")
     
