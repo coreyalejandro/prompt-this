@@ -690,13 +690,21 @@ def initialize_agents():
         ChainOfThoughtAgent(),
         SelfConsistencyAgent(),
         TreeOfThoughtsAgent(),
-        ReActAgent()
+        ReActAgent(),
+        # Advanced agents
+        RAGAgent(),
+        AutoPromptAgent(),
+        ProgramAidedAgent(),
+        FactualityCheckerAgent()
     ]
     
     for agent in agents:
         AGENT_REGISTRY[agent.agent_type] = agent
     
     logger.info(f"Initialized {len(agents)} agents")
+
+# Global workflow engine
+WORKFLOW_ENGINE = None
 
 # API Routes
 @api_router.get("/")
