@@ -775,6 +775,8 @@ async def get_agent_info(agent_type: AgentType):
 async def get_session_history(session_id: str):
     """Get history for a specific session"""
     responses = await db.agent_responses.find({"session_id": session_id}).to_list(100)
+    # Serialize to handle ObjectId
+    responses = [serialize_doc(response) for response in responses]
     return {"session_id": session_id, "responses": responses}
 
 # Workflow API Endpoints
