@@ -845,11 +845,14 @@ async def list_workflows(active_only: bool = False):
     
     if active_only:
         workflows = WORKFLOW_ENGINE.list_active_workflows()
+        # Convert to dict format for serialization
+        workflows_data = [workflow.dict() for workflow in workflows]
     else:
-        # Get from database
-        workflows = await db.workflows.find().to_list(100)
+        # Get from database and handle ObjectId serialization
+        workflows_data = await db.workflows.find().to_list(100)
+        workflows_data = [serialize_doc(workflow) for workflow in workflows_data]
     
-    return {"workflows": workflows}
+    return {"workflows": workflows_data}
 
 @api_router.delete("/workflows/{workflow_id}")
 async def cancel_workflow(workflow_id: str):
