@@ -1,6 +1,8 @@
-# 🤖 Prompt Engineering Agent Platform
+# 🤖 Promptly
 
-A comprehensive, modularized agentic platform that transforms the D.A.I.R. Prompt Engineering Guide into practical, working agents with advanced workflow orchestration capabilities.
+**The Ultimate Prompt Engineering Agent Platform**
+
+Transform the D.A.I.R. Prompt Engineering Guide into practical, modularized agents with advanced workflow orchestration.
 
 ## 📋 Table of Contents
 - [Overview](#overview)
