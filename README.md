@@ -15,9 +15,9 @@ Transform the D.A.I.R. Prompt Engineering Guide into practical, modularized agen
 - [Troubleshooting](#troubleshooting)
 - [Contributing](#contributing)
 
-## 🎯 Overview
+## 🎯 About Promptly
 
-This platform converts theoretical prompt engineering concepts from the D.A.I.R. Prompt Engineering Guide into a practical, modularized agentic system. Each agent follows the "do one thing well" principle while enabling sophisticated orchestrated workflows.
+Promptly is a comprehensive, modularized agentic platform that transforms the D.A.I.R. Prompt Engineering Guide into practical, working agents with advanced workflow orchestration capabilities.
 
 ### Key Benefits
 - **10 Specialized Agents**: Core + Advanced prompt engineering techniques
