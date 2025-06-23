@@ -447,6 +447,9 @@ app.include_router(api_router)
 # Initialize agents on startup
 @app.on_event("startup")
 async def startup_event():
+    # Initialize LLM providers
+    await llm_manager.initialize_all_providers()
+    # Initialize agents
     initialize_agents()
 
 @app.on_event("shutdown")
