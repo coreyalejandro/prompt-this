@@ -19,6 +19,7 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).parent))
 
 from llm_providers import LLMProviderManager, llm_manager
+from workflow_engine import WorkflowEngine, get_workflow_engine, Workflow, WorkflowStep
 
 # Load environment variables
 ROOT_DIR = Path(__file__).parent
