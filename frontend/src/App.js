@@ -445,7 +445,4 @@ const AgentInfoWrapper = () => {
   return <AgentInfo agentType={agentType} />;
 };
 
-// Import useParams hook
-import { useParams } from "react-router-dom";
-
 export default App;
