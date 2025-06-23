@@ -429,6 +429,7 @@ const App = () => {
         {/* Routes */}
         <Routes>
           <Route path="/" element={<AgentLibrary />} />
+          <Route path="/workflows" element={<WorkflowDesigner />} />
           <Route path="/agent/:agentType" element={<AgentTesterWrapper />} />
           <Route path="/agent/:agentType/info" element={<AgentInfoWrapper />} />
         </Routes>
