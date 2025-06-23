@@ -170,13 +170,33 @@ Context: {request.context or 'No additional context provided'}
 
 Please provide a direct and accurate response to the task above."""
         
-        # Placeholder for actual LLM call
-        result = f"Zero-shot response to: {request.prompt}"
+        try:
+            # Use actual LLM call
+            llm_response = await llm_manager.generate_response(
+                provider_type=llm_provider,
+                prompt=enhanced_prompt,
+                max_tokens=1000,
+                temperature=0.7
+            )
+            
+            result = llm_response["response"]
+            metadata = {
+                "technique": "zero_shot", 
+                "prompt_length": len(enhanced_prompt),
+                "model": llm_response.get("model", "unknown"),
+                "usage": llm_response.get("usage", {})
+            }
+            
+        except Exception as e:
+            logger.error(f"LLM call failed: {str(e)}")
+            # Fallback to placeholder
+            result = f"Zero-shot response to: {request.prompt}"
+            metadata = {"technique": "zero_shot", "error": str(e)}
         
         return {
             "result": result,
             "reasoning": ["Applied zero-shot prompting technique"],
-            "metadata": {"technique": "zero_shot", "prompt_length": len(enhanced_prompt)}
+            "metadata": metadata
         }
 
 class FewShotAgent(BaseAgent):
