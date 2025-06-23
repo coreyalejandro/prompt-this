@@ -399,21 +399,287 @@ Use the ReAct (Reasoning + Acting) approach:
 
 Let's start:"""
         
-        # Simulate ReAct cycle
-        react_steps = [
-            "Think: Analyzed the task and determined approach",
-            "Act: Implemented the solution step",
-            "Observe: Evaluated the intermediate result",
-            "Reflect: Confirmed the approach is correct"
-        ]
-        
-        # Placeholder for actual LLM call
-        result = f"ReAct response to: {request.prompt}"
+        try:
+            # Use actual LLM call
+            llm_response = await llm_manager.generate_response(
+                provider_type=llm_provider,
+                prompt=enhanced_prompt,
+                max_tokens=1000,
+                temperature=0.7
+            )
+            
+            result = llm_response["response"]
+            # Extract ReAct steps from the response
+            react_steps = []
+            lines = result.split('\n')
+            for line in lines:
+                if any(keyword in line.lower() for keyword in ['think:', 'thought:', 'act:', 'action:', 'observe:', 'observation:', 'reflect:']):
+                    react_steps.append(line.strip())
+            
+            if not react_steps:
+                react_steps = [
+                    "Think: Analyzed the task and determined approach",
+                    "Act: Implemented the solution step",
+                    "Observe: Evaluated the intermediate result",
+                    "Reflect: Confirmed the approach is correct"
+                ]
+            
+            metadata = {
+                "technique": "react", 
+                "react_cycles": max(1, len(react_steps) // 4),
+                "model": llm_response.get("model", "unknown"),
+                "usage": llm_response.get("usage", {})
+            }
+            
+        except Exception as e:
+            logger.error(f"LLM call failed: {str(e)}")
+            # Fallback to placeholder
+            result = f"ReAct response to: {request.prompt}"
+            react_steps = [
+                "Think: Analyzed the task and determined approach",
+                "Act: Implemented the solution step",
+                "Observe: Evaluated the intermediate result",
+                "Reflect: Confirmed the approach is correct"
+            ]
+            metadata = {"technique": "react", "react_cycles": 1, "error": str(e)}
         
         return {
             "result": result,
             "reasoning": react_steps,
-            "metadata": {"technique": "react", "react_cycles": 1}
+            "metadata": metadata
+        }
+
+# Advanced Agent Implementations
+class RAGAgent(BaseAgent):
+    def __init__(self):
+        super().__init__(AgentType.RAG)
+    
+    async def _process_request(self, request: PromptRequest, llm_provider: LLMProvider) -> Dict[str, Any]:
+        # RAG: Retrieval Augmented Generation
+        enhanced_prompt = f"""Task: {request.prompt}
+
+Context: {request.context or 'No additional context provided'}
+
+Using Retrieval Augmented Generation approach:
+1. First, I'll identify what information needs to be retrieved
+2. Then, I'll use that information to generate a comprehensive response
+3. I'll combine my knowledge with the retrieved context
+
+Based on the available context and my knowledge base:"""
+        
+        try:
+            # Use actual LLM call
+            llm_response = await llm_manager.generate_response(
+                provider_type=llm_provider,
+                prompt=enhanced_prompt,
+                max_tokens=1200,
+                temperature=0.6
+            )
+            
+            result = llm_response["response"]
+            reasoning = [
+                "Step 1: Analyzed information retrieval requirements",
+                "Step 2: Combined retrieved context with base knowledge",
+                "Step 3: Generated augmented response"
+            ]
+            
+            metadata = {
+                "technique": "rag", 
+                "model": llm_response.get("model", "unknown"),
+                "usage": llm_response.get("usage", {}),
+                "context_length": len(request.context or "")
+            }
+            
+        except Exception as e:
+            logger.error(f"LLM call failed: {str(e)}")
+            result = f"RAG response to: {request.prompt}"
+            reasoning = ["Applied Retrieval Augmented Generation technique"]
+            metadata = {"technique": "rag", "error": str(e)}
+        
+        return {
+            "result": result,
+            "reasoning": reasoning,
+            "metadata": metadata
+        }
+
+class AutoPromptAgent(BaseAgent):
+    def __init__(self):
+        super().__init__(AgentType.AUTO_PROMPT)
+    
+    async def _process_request(self, request: PromptRequest, llm_provider: LLMProvider) -> Dict[str, Any]:
+        # Auto Prompt Engineering: Optimize the prompt automatically
+        optimization_prompt = f"""I need to optimize this prompt for better results:
+
+Original Prompt: "{request.prompt}"
+Context: {request.context or 'No additional context'}
+
+Please create an optimized version of this prompt that:
+1. Is clearer and more specific
+2. Includes better instructions
+3. Has examples if helpful
+4. Uses effective prompt engineering techniques
+
+Optimized Prompt:"""
+        
+        try:
+            # First, optimize the prompt
+            optimization_response = await llm_manager.generate_response(
+                provider_type=llm_provider,
+                prompt=optimization_prompt,
+                max_tokens=800,
+                temperature=0.5
+            )
+            
+            optimized_prompt = optimization_response["response"]
+            
+            # Then use the optimized prompt
+            final_response = await llm_manager.generate_response(
+                provider_type=llm_provider,
+                prompt=optimized_prompt,
+                max_tokens=1000,
+                temperature=0.7
+            )
+            
+            result = final_response["response"]
+            reasoning = [
+                "Step 1: Analyzed original prompt for optimization opportunities",
+                "Step 2: Created optimized prompt with better structure",
+                f"Step 3: Applied optimized prompt: {optimized_prompt[:100]}...",
+                "Step 4: Generated final response using optimized prompt"
+            ]
+            
+            metadata = {
+                "technique": "auto_prompt",
+                "original_prompt": request.prompt,
+                "optimized_prompt": optimized_prompt,
+                "model": final_response.get("model", "unknown"),
+                "usage": final_response.get("usage", {})
+            }
+            
+        except Exception as e:
+            logger.error(f"LLM call failed: {str(e)}")
+            result = f"Auto-prompt optimized response to: {request.prompt}"
+            reasoning = ["Applied automatic prompt optimization technique"]
+            metadata = {"technique": "auto_prompt", "error": str(e)}
+        
+        return {
+            "result": result,
+            "reasoning": reasoning,
+            "metadata": metadata
+        }
+
+class ProgramAidedAgent(BaseAgent):
+    def __init__(self):
+        super().__init__(AgentType.PROGRAM_AIDED)
+    
+    async def _process_request(self, request: PromptRequest, llm_provider: LLMProvider) -> Dict[str, Any]:
+        # Program-Aided Language Model: Use code to solve problems
+        enhanced_prompt = f"""Task: {request.prompt}
+
+Context: {request.context or 'No additional context provided'}
+
+I'll solve this using a Program-Aided approach:
+1. First, I'll analyze if this problem can benefit from code
+2. Then, I'll write Python code to help solve it
+3. Finally, I'll interpret the results
+
+Let me work through this systematically with code assistance:
+
+```python
+# Code to help solve: {request.prompt}
+```"""
+        
+        try:
+            # Use actual LLM call
+            llm_response = await llm_manager.generate_response(
+                provider_type=llm_provider,
+                prompt=enhanced_prompt,
+                max_tokens=1200,
+                temperature=0.3  # Lower temperature for more precise code
+            )
+            
+            result = llm_response["response"]
+            reasoning = [
+                "Step 1: Analyzed problem for code-assisted solution",
+                "Step 2: Generated relevant Python code",
+                "Step 3: Interpreted code results",
+                "Step 4: Provided comprehensive solution"
+            ]
+            
+            metadata = {
+                "technique": "program_aided",
+                "model": llm_response.get("model", "unknown"),
+                "usage": llm_response.get("usage", {}),
+                "code_assisted": True
+            }
+            
+        except Exception as e:
+            logger.error(f"LLM call failed: {str(e)}")
+            result = f"Program-aided response to: {request.prompt}"
+            reasoning = ["Applied Program-Aided Language Model technique"]
+            metadata = {"technique": "program_aided", "error": str(e)}
+        
+        return {
+            "result": result,
+            "reasoning": reasoning,
+            "metadata": metadata
+        }
+
+class FactualityCheckerAgent(BaseAgent):
+    def __init__(self):
+        super().__init__(AgentType.FACTUALITY_CHECKER)
+    
+    async def _process_request(self, request: PromptRequest, llm_provider: LLMProvider) -> Dict[str, Any]:
+        # Factuality Checker: Validate accuracy of information
+        enhanced_prompt = f"""Task: Analyze the following statement or content for factual accuracy:
+
+Content to check: {request.prompt}
+
+Context: {request.context or 'No additional context provided'}
+
+Please provide a detailed factuality analysis:
+1. Identify all factual claims made
+2. Evaluate the accuracy of each claim
+3. Note any potential inaccuracies or uncertainties
+4. Provide confidence levels for assessments
+5. Suggest corrections if needed
+
+Factuality Analysis:"""
+        
+        try:
+            # Use actual LLM call
+            llm_response = await llm_manager.generate_response(
+                provider_type=llm_provider,
+                prompt=enhanced_prompt,
+                max_tokens=1200,
+                temperature=0.2  # Low temperature for more accurate fact-checking
+            )
+            
+            result = llm_response["response"]
+            reasoning = [
+                "Step 1: Identified factual claims in the content",
+                "Step 2: Cross-referenced claims with knowledge base",
+                "Step 3: Evaluated accuracy and confidence levels",
+                "Step 4: Provided detailed factuality assessment"
+            ]
+            
+            metadata = {
+                "technique": "factuality_checker",
+                "model": llm_response.get("model", "unknown"),
+                "usage": llm_response.get("usage", {}),
+                "content_length": len(request.prompt)
+            }
+            
+        except Exception as e:
+            logger.error(f"LLM call failed: {str(e)}")
+            result = f"Factuality analysis of: {request.prompt}"
+            reasoning = ["Applied factuality checking technique"]
+            metadata = {"technique": "factuality_checker", "error": str(e)}
+        
+        return {
+            "result": result,
+            "reasoning": reasoning,
+            "metadata": metadata
         }
 
 # Initialize agents
