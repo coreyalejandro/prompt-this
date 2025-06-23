@@ -1,38 +1,346 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+/* Custom styles */
 .App {
-    text-align: center;
+  min-height: 100vh;
 }
 
-.App-logo {
-    height: 40vmin;
-    pointer-events: none;
+/* Loading spinner animation */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-    .App-logo {
-        animation: App-logo-spin infinite 20s linear;
-    }
+.animate-spin {
+  animation: spin 1s linear infinite;
 }
 
-.App-header {
-    background-color: #0f0f10;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
 }
 
-.App-link {
-    color: #61dafb;
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
 }
 
-@keyframes App-logo-spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Code syntax highlighting */
+pre {
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 4px;
+  padding: 1rem;
+  overflow-x: auto;
+}
+
+code {
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 3px;
+  padding: 0.2rem 0.4rem;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 0.875rem;
+}
+
+/* Agent card hover effects */
+.agent-card {
+  transition: all 0.3s ease;
+}
+
+.agent-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* Response status indicators */
+.status-completed {
+  @apply bg-green-100 text-green-800;
+}
+
+.status-failed {
+  @apply bg-red-100 text-red-800;
+}
+
+.status-processing {
+  @apply bg-yellow-100 text-yellow-800;
+}
+
+/* Form enhancements */
+.form-input {
+  @apply w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors;
+}
+
+.form-textarea {
+  @apply w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-vertical;
+}
+
+.form-select {
+  @apply w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-white;
+}
+
+/* Button variants */
+.btn-primary {
+  @apply bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors font-medium;
+}
+
+.btn-secondary {
+  @apply bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition-colors font-medium;
+}
+
+.btn-success {
+  @apply bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors font-medium;
+}
+
+.btn-danger {
+  @apply bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors font-medium;
+}
+
+.btn-disabled {
+  @apply bg-gray-400 text-white px-4 py-2 rounded-lg cursor-not-allowed font-medium;
+}
+
+/* Layout improvements */
+.container {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+/* Card components */
+.card {
+  @apply bg-white rounded-lg shadow-md overflow-hidden;
+}
+
+.card-header {
+  @apply px-6 py-4 border-b border-gray-200;
+}
+
+.card-body {
+  @apply px-6 py-4;
+}
+
+.card-footer {
+  @apply px-6 py-4 border-t border-gray-200;
+}
+
+/* Typography */
+.text-heading {
+  @apply text-2xl font-bold text-gray-900;
+}
+
+.text-subheading {
+  @apply text-lg font-semibold text-gray-700;
+}
+
+.text-body {
+  @apply text-base text-gray-600;
+}
+
+.text-caption {
+  @apply text-sm text-gray-500;
+}
+
+/* Spacing utilities */
+.space-y-6 > * + * {
+  margin-top: 1.5rem;
+}
+
+.space-y-4 > * + * {
+  margin-top: 1rem;
+}
+
+.space-y-2 > * + * {
+  margin-top: 0.5rem;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .container {
+    @apply px-4;
+  }
+  
+  .grid-responsive {
+    @apply grid-cols-1;
+  }
+}
+
+@media (min-width: 769px) {
+  .grid-responsive {
+    @apply grid-cols-2;
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid-responsive {
+    @apply grid-cols-3;
+  }
+}
+
+/* Loading states */
+.loading-overlay {
+  @apply absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center;
+}
+
+.loading-spinner {
+  @apply animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500;
+}
+
+/* Alert components */
+.alert {
+  @apply p-4 rounded-lg border;
+}
+
+.alert-success {
+  @apply bg-green-50 border-green-200 text-green-800;
+}
+
+.alert-error {
+  @apply bg-red-50 border-red-200 text-red-800;
+}
+
+.alert-warning {
+  @apply bg-yellow-50 border-yellow-200 text-yellow-800;
+}
+
+.alert-info {
+  @apply bg-blue-50 border-blue-200 text-blue-800;
+}
+
+/* Navigation */
+.nav-link {
+  @apply text-blue-500 hover:text-blue-700 transition-colors;
+}
+
+.nav-link:hover {
+  text-decoration: underline;
+}
+
+/* Header styling */
+.header {
+  @apply bg-white shadow-sm border-b border-gray-200;
+}
+
+.header-content {
+  @apply flex items-center justify-between h-16;
+}
+
+.logo {
+  @apply text-xl font-bold text-gray-800;
+}
+
+/* Footer styling */
+.footer {
+  @apply bg-white border-t border-gray-200 mt-auto;
+}
+
+.footer-content {
+  @apply py-6 text-center text-gray-600;
+}
+
+/* Agent-specific styles */
+.agent-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
+}
+
+.agent-card {
+  @apply bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow;
+}
+
+.agent-title {
+  @apply text-xl font-semibold text-gray-800 mb-2;
+}
+
+.agent-description {
+  @apply text-gray-600 mb-4;
+}
+
+.agent-actions {
+  @apply flex space-x-2;
+}
+
+/* Response display */
+.response-container {
+  @apply space-y-4;
+}
+
+.response-section {
+  @apply bg-gray-50 rounded-lg p-4;
+}
+
+.response-title {
+  @apply text-lg font-medium text-gray-800 mb-2;
+}
+
+.response-content {
+  @apply text-gray-700 whitespace-pre-wrap;
+}
+
+/* Metadata display */
+.metadata-container {
+  @apply bg-gray-50 rounded-lg p-4;
+}
+
+.metadata-content {
+  @apply text-sm text-gray-700 font-mono overflow-x-auto;
+}
+
+/* Examples form */
+.example-container {
+  @apply border border-gray-200 rounded-lg p-4 space-y-2;
+}
+
+.example-header {
+  @apply flex justify-between items-center mb-2;
+}
+
+.example-title {
+  @apply text-sm font-medium text-gray-700;
+}
+
+.example-remove {
+  @apply text-red-500 hover:text-red-700 text-sm cursor-pointer;
+}
+
+.example-inputs {
+  @apply space-y-2;
+}
+
+.example-input {
+  @apply w-full p-2 border border-gray-300 rounded-md text-sm;
+}
+
+/* Add example button */
+.add-example-btn {
+  @apply text-blue-500 hover:text-blue-700 text-sm cursor-pointer;
+}
+
+/* Provider selection */
+.provider-select {
+  @apply w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .agent-grid {
+    @apply grid-cols-1 md:grid-cols-2;
+  }
+}
+
+@media (max-width: 768px) {
+  .agent-grid {
+    @apply grid-cols-1;
+  }
+  
+  .agent-actions {
+    @apply flex-col space-y-2 space-x-0;
+  }
 }
