@@ -101,12 +101,17 @@ class PromptEngineeringAgentTester:
             if not isinstance(agents, list):
                 return False, "'agents' field is not a list"
             
-            if len(agents) != 6:
-                return False, f"Expected 6 agents, got {len(agents)}"
+            if len(agents) != 10:
+                return False, f"Expected 10 agents, got {len(agents)}"
             
             # Check if all required agent types are present
-            required_types = ["zero_shot", "few_shot", "chain_of_thought", 
-                             "self_consistency", "tree_of_thoughts", "react"]
+            required_types = [
+                # Core agents
+                "zero_shot", "few_shot", "chain_of_thought", 
+                "self_consistency", "tree_of_thoughts", "react",
+                # Advanced agents
+                "rag", "auto_prompt", "program_aided", "factuality_checker"
+            ]
             
             agent_types = [agent["type"] for agent in agents]
             missing_types = [t for t in required_types if t not in agent_types]
@@ -114,7 +119,7 @@ class PromptEngineeringAgentTester:
             if missing_types:
                 return False, f"Missing agent types: {', '.join(missing_types)}"
             
-            return True, f"Found all 6 required agent types"
+            return True, f"Found all 10 required agent types"
         
         return self.run_test(
             "Get Agents List",
