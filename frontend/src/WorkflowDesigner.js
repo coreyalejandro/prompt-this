@@ -119,15 +119,35 @@ const WorkflowDesigner = () => {
   };
 
   const executeWorkflow = async (workflowId) => {
+    if (!workflowId) {
+      alert("Invalid workflow ID");
+      return;
+    }
+
     setLoading(true);
     try {
-      await axios.post(`${API}/workflows/${workflowId}/execute`);
-      alert("Workflow execution started!");
+      const response = await axios.post(`${API}/workflows/${workflowId}/execute`);
+      alert(`Workflow execution started! Message: ${response.data.message}`);
+      
       // Refresh workflows to see status updates
-      setTimeout(fetchWorkflows, 2000);
+      setTimeout(() => {
+        fetchWorkflows();
+      }, 2000);
+      
+      // Continue refreshing every 5 seconds for the next 30 seconds to show progress
+      let refreshCount = 0;
+      const refreshInterval = setInterval(() => {
+        refreshCount++;
+        fetchWorkflows();
+        if (refreshCount >= 6) { // Stop after 30 seconds (6 * 5s)
+          clearInterval(refreshInterval);
+        }
+      }, 5000);
+      
     } catch (error) {
       console.error("Error executing workflow:", error);
-      alert("Error executing workflow");
+      const errorMessage = error.response?.data?.detail || error.message || "Unknown error occurred";
+      alert(`Failed to execute workflow: ${errorMessage}`);
     } finally {
       setLoading(false);
     }
