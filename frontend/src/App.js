@@ -405,6 +405,20 @@ const AgentInfo = ({ agentType }) => {
 
 // Main App Component
 const App = () => {
+  const [showOnboarding, setShowOnboarding] = useState(false);
+
+  useEffect(() => {
+    // Check if user has completed onboarding
+    const completed = localStorage.getItem('onboarding_completed');
+    if (completed !== 'true') {
+      setShowOnboarding(true);
+    }
+  }, []);
+
+  const handleOnboardingComplete = () => {
+    setShowOnboarding(false);
+  };
+
   return (
     <div className="min-h-screen bg-gray-100">
       <BrowserRouter>
@@ -422,6 +436,12 @@ const App = () => {
                 <Link to="/workflows" className="text-gray-600 hover:text-gray-800">
                   Workflows
                 </Link>
+                <button
+                  onClick={() => setShowOnboarding(true)}
+                  className="text-gray-600 hover:text-gray-800"
+                >
+                  📚 Tutorial
+                </button>
               </nav>
             </div>
           </div>
@@ -439,8 +459,18 @@ const App = () => {
         <footer className="bg-white border-t mt-12">
           <div className="container mx-auto px-4 py-6 text-center text-gray-600">
             <p>Built with ❤️ using FastAPI + React | Based on D.A.I.R. Prompt Engineering Guide</p>
+            <div className="mt-2 text-sm space-x-4">
+              <a href="/docs/README.md" className="text-blue-500 hover:text-blue-700">Documentation</a>
+              <a href="/docs/API_DOCUMENTATION.md" className="text-blue-500 hover:text-blue-700">API Docs</a>
+              <a href="/docs/TROUBLESHOOTING_GUIDE.md" className="text-blue-500 hover:text-blue-700">Troubleshooting</a>
+            </div>
           </div>
         </footer>
+
+        {/* Onboarding Tutorial */}
+        {showOnboarding && (
+          <OnboardingTutorial onComplete={handleOnboardingComplete} />
+        )}
       </BrowserRouter>
     </div>
   );
