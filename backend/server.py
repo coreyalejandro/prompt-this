@@ -832,9 +832,9 @@ async def get_workflow(workflow_id: str):
         workflow_data = await db.workflows.find_one({"id": workflow_id})
         if not workflow_data:
             raise HTTPException(status_code=404, detail="Workflow not found")
-        return workflow_data
+        return serialize_doc(workflow_data)
     
-    return workflow
+    return workflow.dict()
 
 @api_router.get("/workflows")
 async def list_workflows(active_only: bool = False):
