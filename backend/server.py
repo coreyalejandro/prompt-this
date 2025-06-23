@@ -758,6 +758,183 @@ async def get_session_history(session_id: str):
     responses = await db.agent_responses.find({"session_id": session_id}).to_list(100)
     return {"session_id": session_id, "responses": responses}
 
+# Workflow API Endpoints
+@api_router.post("/workflows")
+async def create_workflow(request: Dict[str, Any]):
+    """Create a new workflow"""
+    global WORKFLOW_ENGINE
+    if not WORKFLOW_ENGINE:
+        WORKFLOW_ENGINE = get_workflow_engine(AGENT_REGISTRY)
+    
+    name = request.get("name", "Untitled Workflow")
+    description = request.get("description")
+    steps = request.get("steps", [])
+    session_id = request.get("session_id")
+    
+    workflow = await WORKFLOW_ENGINE.create_workflow(name, steps, description, session_id)
+    
+    # Store in database
+    await db.workflows.insert_one(workflow.dict())
+    
+    return workflow
+
+@api_router.post("/workflows/{workflow_id}/execute")
+async def execute_workflow(workflow_id: str, background_tasks: BackgroundTasks):
+    """Execute a workflow"""
+    global WORKFLOW_ENGINE
+    if not WORKFLOW_ENGINE:
+        WORKFLOW_ENGINE = get_workflow_engine(AGENT_REGISTRY)
+    
+    # Execute workflow in background
+    background_tasks.add_task(execute_workflow_task, workflow_id)
+    
+    return {"message": f"Workflow {workflow_id} execution started", "workflow_id": workflow_id}
+
+async def execute_workflow_task(workflow_id: str):
+    """Background task to execute workflow"""
+    try:
+        workflow = await WORKFLOW_ENGINE.execute_workflow(workflow_id)
+        # Update in database
+        await db.workflows.replace_one({"id": workflow_id}, workflow.dict())
+        logger.info(f"Workflow {workflow_id} completed")
+    except Exception as e:
+        logger.error(f"Workflow {workflow_id} failed: {str(e)}")
+
+@api_router.get("/workflows/{workflow_id}")
+async def get_workflow(workflow_id: str):
+    """Get workflow details"""
+    global WORKFLOW_ENGINE
+    if not WORKFLOW_ENGINE:
+        WORKFLOW_ENGINE = get_workflow_engine(AGENT_REGISTRY)
+    
+    workflow = WORKFLOW_ENGINE.get_workflow(workflow_id)
+    if not workflow:
+        # Try to get from database
+        workflow_data = await db.workflows.find_one({"id": workflow_id})
+        if not workflow_data:
+            raise HTTPException(status_code=404, detail="Workflow not found")
+        return workflow_data
+    
+    return workflow
+
+@api_router.get("/workflows")
+async def list_workflows(active_only: bool = False):
+    """List workflows"""
+    global WORKFLOW_ENGINE
+    if not WORKFLOW_ENGINE:
+        WORKFLOW_ENGINE = get_workflow_engine(AGENT_REGISTRY)
+    
+    if active_only:
+        workflows = WORKFLOW_ENGINE.list_active_workflows()
+    else:
+        # Get from database
+        workflows = await db.workflows.find().to_list(100)
+    
+    return {"workflows": workflows}
+
+@api_router.delete("/workflows/{workflow_id}")
+async def cancel_workflow(workflow_id: str):
+    """Cancel an active workflow"""
+    global WORKFLOW_ENGINE
+    if not WORKFLOW_ENGINE:
+        WORKFLOW_ENGINE = get_workflow_engine(AGENT_REGISTRY)
+    
+    success = await WORKFLOW_ENGINE.cancel_workflow(workflow_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Workflow not found or not active")
+    
+    return {"message": f"Workflow {workflow_id} cancelled"}
+
+# Workflow Templates
+@api_router.get("/workflow-templates")
+async def get_workflow_templates():
+    """Get predefined workflow templates"""
+    templates = [
+        {
+            "id": "analysis_pipeline",
+            "name": "Content Analysis Pipeline",
+            "description": "Analyze content using multiple agents for comprehensive insights",
+            "steps": [
+                {
+                    "name": "Zero-Shot Analysis",
+                    "agent_type": "zero_shot",
+                    "prompt": "Provide an initial analysis of the following content: {content}",
+                    "llm_provider": "openai"
+                },
+                {
+                    "name": "Chain-of-Thought Deep Dive",
+                    "agent_type": "chain_of_thought",
+                    "prompt": "Provide a detailed step-by-step analysis of the content",
+                    "depends_on": ["Zero-Shot Analysis"],
+                    "llm_provider": "anthropic"
+                },
+                {
+                    "name": "Factuality Check",
+                    "agent_type": "factuality_checker",
+                    "prompt": "Check the factual accuracy of the analysis",
+                    "depends_on": ["Chain-of-Thought Deep Dive"],
+                    "llm_provider": "openai"
+                }
+            ]
+        },
+        {
+            "id": "problem_solving",
+            "name": "Multi-Agent Problem Solving",
+            "description": "Solve complex problems using different reasoning approaches",
+            "steps": [
+                {
+                    "name": "Tree of Thoughts Exploration",
+                    "agent_type": "tree_of_thoughts",
+                    "prompt": "Explore different solution paths for: {problem}",
+                    "llm_provider": "openai"
+                },
+                {
+                    "name": "Program-Aided Solution",
+                    "agent_type": "program_aided",
+                    "prompt": "Use code to solve this problem if applicable",
+                    "depends_on": ["Tree of Thoughts Exploration"],
+                    "llm_provider": "openai"
+                },
+                {
+                    "name": "Self-Consistency Check",
+                    "agent_type": "self_consistency",
+                    "prompt": "Verify the solution using multiple reasoning paths",
+                    "depends_on": ["Program-Aided Solution"],
+                    "llm_provider": "anthropic"
+                }
+            ]
+        },
+        {
+            "id": "content_generation",
+            "name": "Content Generation & Optimization",
+            "description": "Generate and optimize content using multiple techniques",
+            "steps": [
+                {
+                    "name": "Initial Generation",
+                    "agent_type": "zero_shot",
+                    "prompt": "Generate content for: {topic}",
+                    "llm_provider": "openai"
+                },
+                {
+                    "name": "Auto-Prompt Optimization",
+                    "agent_type": "auto_prompt",
+                    "prompt": "Improve and optimize the generated content",
+                    "depends_on": ["Initial Generation"],
+                    "llm_provider": "anthropic"
+                },
+                {
+                    "name": "RAG Enhancement",
+                    "agent_type": "rag",
+                    "prompt": "Enhance with additional context and information",
+                    "depends_on": ["Auto-Prompt Optimization"],
+                    "llm_provider": "openai"
+                }
+            ]
+        }
+    ]
+    
+    return {"templates": templates}
+
 # Include router
 app.include_router(api_router)
 
