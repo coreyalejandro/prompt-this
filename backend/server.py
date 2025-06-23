@@ -220,13 +220,33 @@ Examples:{examples_text}
 
 Now, please provide a response following the pattern shown in the examples above."""
         
-        # Placeholder for actual LLM call
-        result = f"Few-shot response to: {request.prompt}"
+        try:
+            # Use actual LLM call
+            llm_response = await llm_manager.generate_response(
+                provider_type=llm_provider,
+                prompt=enhanced_prompt,
+                max_tokens=1000,
+                temperature=0.7
+            )
+            
+            result = llm_response["response"]
+            metadata = {
+                "technique": "few_shot", 
+                "examples_count": len(request.examples or []),
+                "model": llm_response.get("model", "unknown"),
+                "usage": llm_response.get("usage", {})
+            }
+            
+        except Exception as e:
+            logger.error(f"LLM call failed: {str(e)}")
+            # Fallback to placeholder
+            result = f"Few-shot response to: {request.prompt}"
+            metadata = {"technique": "few_shot", "examples_count": len(request.examples or []), "error": str(e)}
         
         return {
             "result": result,
             "reasoning": [f"Used {len(request.examples or [])} examples to guide response"],
-            "metadata": {"technique": "few_shot", "examples_count": len(request.examples or [])}
+            "metadata": metadata
         }
 
 class ChainOfThoughtAgent(BaseAgent):
