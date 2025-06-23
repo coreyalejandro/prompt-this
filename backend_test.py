@@ -312,8 +312,13 @@ class PromptEngineeringAgentTester:
         self.test_get_agents()
         
         # Test each agent type info endpoint
-        agent_types = ["zero_shot", "few_shot", "chain_of_thought", 
-                      "self_consistency", "tree_of_thoughts", "react"]
+        agent_types = [
+            # Core agents
+            "zero_shot", "few_shot", "chain_of_thought", 
+            "self_consistency", "tree_of_thoughts", "react",
+            # Advanced agents
+            "rag", "auto_prompt", "program_aided", "factuality_checker"
+        ]
         
         for agent_type in agent_types:
             self.test_agent_info(agent_type)
@@ -366,6 +371,79 @@ class PromptEngineeringAgentTester:
             "anthropic",
             "Plan a trip to Japan"
         )
+        
+        # Test advanced agents
+        
+        # 7. RAG with context
+        self.test_agent_process(
+            "rag",
+            "openai",
+            "Explain quantum computing",
+            context="Quantum computing is a type of computing that uses quantum-mechanical phenomena, such as superposition and entanglement, to perform operations on data."
+        )
+        
+        # 8. Auto-Prompt
+        self.test_agent_process(
+            "auto_prompt",
+            "openai",
+            "Write a poem about AI"
+        )
+        
+        # 9. Program-Aided
+        self.test_agent_process(
+            "program_aided",
+            "openai",
+            "Calculate the factorial of 5"
+        )
+        
+        # 10. Factuality Checker
+        self.test_agent_process(
+            "factuality_checker",
+            "openai",
+            "The Earth is flat and the center of the universe"
+        )
+        
+        # Test workflow functionality
+        
+        # 11. Get workflow templates
+        success, templates_data = self.test_get_workflow_templates()
+        
+        # 12. Create a workflow
+        test_workflow_steps = [
+            {
+                "name": "Step 1: Initial Analysis",
+                "agent_type": "zero_shot",
+                "prompt": "Analyze the following topic: Artificial Intelligence",
+                "llm_provider": "openai"
+            },
+            {
+                "name": "Step 2: Detailed Exploration",
+                "agent_type": "chain_of_thought",
+                "prompt": "Provide a detailed analysis of AI applications",
+                "depends_on": ["Step 1: Initial Analysis"],
+                "llm_provider": "openai"
+            }
+        ]
+        
+        success, workflow_data = self.test_create_workflow(
+            f"Test Workflow {int(time.time())}", 
+            test_workflow_steps
+        )
+        
+        # 13. Get workflows list
+        self.test_get_workflows()
+        
+        # 14. Get specific workflow and execute it
+        if success and "id" in workflow_data:
+            workflow_id = workflow_data["id"]
+            self.test_get_workflow(workflow_id)
+            self.test_execute_workflow(workflow_id)
+            
+            # Wait a bit for execution to start
+            time.sleep(2)
+            
+            # Check workflow status after execution started
+            self.test_get_workflow(workflow_id)
         
         # Print summary
         self.print_summary()
