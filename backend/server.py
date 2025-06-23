@@ -21,6 +21,25 @@ sys.path.append(str(Path(__file__).parent))
 from llm_providers import LLMProviderManager, llm_manager
 from workflow_engine import WorkflowEngine, get_workflow_engine, Workflow, WorkflowStep
 
+# Custom JSON encoder for MongoDB ObjectId
+from bson import ObjectId
+
+def serialize_doc(doc):
+    """Convert MongoDB document to JSON serializable format"""
+    if doc is None:
+        return None
+    
+    if isinstance(doc, dict):
+        return {key: serialize_doc(value) for key, value in doc.items()}
+    elif isinstance(doc, list):
+        return [serialize_doc(item) for item in doc]
+    elif isinstance(doc, ObjectId):
+        return str(doc)
+    elif hasattr(doc, 'dict'):  # Pydantic models
+        return doc.dict()
+    else:
+        return doc
+
 # Load environment variables
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
