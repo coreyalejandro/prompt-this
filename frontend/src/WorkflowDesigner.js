@@ -36,6 +36,7 @@ const WorkflowDesigner = () => {
       setWorkflows(response.data.workflows);
     } catch (error) {
       console.error("Error fetching workflows:", error);
+      alert("Failed to load workflows. Please try again.");
     }
   };
 
