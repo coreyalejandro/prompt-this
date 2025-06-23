@@ -458,7 +458,7 @@ const App = () => {
         {/* Footer */}
         <footer className="bg-white border-t mt-12">
           <div className="container mx-auto px-4 py-6 text-center text-gray-600">
-            <p>Built with ❤️ using FastAPI + React | Based on D.A.I.R. Prompt Engineering Guide</p>
+            <p>Built with ❤️ using FastAPI + React | Promptly - Prompt Engineering Done Right</p>
             <div className="mt-2 text-sm space-x-4">
               <a href="/docs/README.md" className="text-blue-500 hover:text-blue-700">Documentation</a>
               <a href="/docs/API_DOCUMENTATION.md" className="text-blue-500 hover:text-blue-700">API Docs</a>
