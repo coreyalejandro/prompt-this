@@ -427,7 +427,7 @@ const App = () => {
           <div className="container mx-auto px-4 py-4">
             <div className="flex justify-between items-center">
               <Link to="/" className="text-xl font-bold text-gray-800">
-                🤖 Prompt Engineering Agent Platform
+                🤖 Promptly - Prompt Engineering Agent Platform
               </Link>
               <nav className="flex space-x-6">
                 <Link to="/" className="text-gray-600 hover:text-gray-800">
