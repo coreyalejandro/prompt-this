@@ -945,6 +945,9 @@ async def startup_event():
     await llm_manager.initialize_all_providers()
     # Initialize agents
     initialize_agents()
+    # Initialize workflow engine
+    global WORKFLOW_ENGINE
+    WORKFLOW_ENGINE = get_workflow_engine(AGENT_REGISTRY)
 
 @app.on_event("shutdown")
 async def shutdown_event():
