@@ -794,10 +794,11 @@ async def create_workflow(request: Dict[str, Any]):
     
     workflow = await WORKFLOW_ENGINE.create_workflow(name, steps, description, session_id)
     
-    # Store in database
-    await db.workflows.insert_one(workflow.dict())
+    # Store in database with proper serialization
+    workflow_dict = workflow.dict()
+    await db.workflows.insert_one(workflow_dict)
     
-    return workflow
+    return workflow.dict()
 
 @api_router.post("/workflows/{workflow_id}/execute")
 async def execute_workflow(workflow_id: str, background_tasks: BackgroundTasks):
