@@ -188,6 +188,118 @@ class PromptEngineeringAgentTester:
             data=request_data,
             validate_func=validate
         )
+        
+    def test_get_workflow_templates(self):
+        """Test getting workflow templates"""
+        def validate(data):
+            if "templates" not in data:
+                return False, "Response missing 'templates' field"
+            
+            templates = data["templates"]
+            if not isinstance(templates, list):
+                return False, "'templates' field is not a list"
+            
+            if len(templates) != 3:
+                return False, f"Expected 3 templates, got {len(templates)}"
+            
+            # Check if all templates have required fields
+            for template in templates:
+                if not all(key in template for key in ["id", "name", "description", "steps"]):
+                    return False, "Template missing required fields"
+            
+            return True, f"Found {len(templates)} workflow templates"
+        
+        return self.run_test(
+            "Get Workflow Templates",
+            "GET",
+            "workflow-templates",
+            200,
+            validate_func=validate
+        )
+    
+    def test_create_workflow(self, name, steps):
+        """Test creating a workflow"""
+        workflow_data = {
+            "name": name,
+            "description": f"Test workflow created at {datetime.now().isoformat()}",
+            "steps": steps,
+            "session_id": f"test_session_{int(time.time())}"
+        }
+        
+        def validate(data):
+            if not all(key in data for key in ["id", "name", "steps", "status"]):
+                return False, "Response missing required fields"
+            
+            if data["name"] != name:
+                return False, f"Expected workflow name {name}, got {data['name']}"
+            
+            if len(data["steps"]) != len(steps):
+                return False, f"Expected {len(steps)} steps, got {len(data['steps'])}"
+            
+            return True, f"Workflow '{name}' created successfully with {len(steps)} steps"
+        
+        return self.run_test(
+            f"Create Workflow - {name}",
+            "POST",
+            "workflows",
+            200,
+            data=workflow_data,
+            validate_func=validate
+        )
+    
+    def test_get_workflows(self):
+        """Test getting the list of workflows"""
+        def validate(data):
+            if "workflows" not in data:
+                return False, "Response missing 'workflows' field"
+            
+            if not isinstance(data["workflows"], list):
+                return False, "'workflows' field is not a list"
+            
+            return True, f"Retrieved {len(data['workflows'])} workflows"
+        
+        return self.run_test(
+            "Get Workflows List",
+            "GET",
+            "workflows",
+            200,
+            validate_func=validate
+        )
+    
+    def test_get_workflow(self, workflow_id):
+        """Test getting a specific workflow"""
+        def validate(data):
+            if "id" not in data or data["id"] != workflow_id:
+                return False, f"Response missing 'id' field or incorrect id"
+            
+            return True, f"Retrieved workflow {workflow_id}"
+        
+        return self.run_test(
+            f"Get Workflow - {workflow_id}",
+            "GET",
+            f"workflows/{workflow_id}",
+            200,
+            validate_func=validate
+        )
+    
+    def test_execute_workflow(self, workflow_id):
+        """Test executing a workflow"""
+        def validate(data):
+            if "workflow_id" not in data or data["workflow_id"] != workflow_id:
+                return False, "Response missing or incorrect 'workflow_id' field"
+            
+            if "message" not in data:
+                return False, "Response missing 'message' field"
+            
+            return True, f"Workflow {workflow_id} execution started"
+        
+        return self.run_test(
+            f"Execute Workflow - {workflow_id}",
+            "POST",
+            f"workflows/{workflow_id}/execute",
+            200,
+            validate_func=validate
+        )
 
     def run_all_tests(self):
         """Run all API tests"""
