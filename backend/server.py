@@ -728,7 +728,7 @@ WORKFLOW_ENGINE = None
 # API Routes
 @api_router.get("/")
 async def root():
-    return {"message": "Prompt Engineering Agent Platform API", "version": "1.0.0"}
+    return {"message": "Promptly API", "version": "1.0.0"}
 
 @api_router.get("/agents")
 async def get_agents():
