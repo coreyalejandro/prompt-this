@@ -273,19 +273,46 @@ Please solve this step by step:
 
 Let's work through this step by step:"""
         
-        # Placeholder for actual LLM call
-        result = f"Chain-of-thought response to: {request.prompt}"
-        reasoning = [
-            "Step 1: Analyzed the task requirements",
-            "Step 2: Broke down the problem into components",
-            "Step 3: Solved each component systematically",
-            "Step 4: Synthesized the final answer"
-        ]
+        try:
+            # Use actual LLM call
+            llm_response = await llm_manager.generate_response(
+                provider_type=llm_provider,
+                prompt=enhanced_prompt,
+                max_tokens=1000,
+                temperature=0.7
+            )
+            
+            result = llm_response["response"]
+            # Extract reasoning steps from the response
+            reasoning_lines = result.split('\n')
+            reasoning = [line.strip() for line in reasoning_lines if line.strip() and any(step in line.lower() for step in ['step', '1.', '2.', '3.', '4.', 'first', 'second', 'third', 'finally'])]
+            
+            if not reasoning:
+                reasoning = ["Applied chain-of-thought prompting technique"]
+            
+            metadata = {
+                "technique": "chain_of_thought", 
+                "reasoning_steps": len(reasoning),
+                "model": llm_response.get("model", "unknown"),
+                "usage": llm_response.get("usage", {})
+            }
+            
+        except Exception as e:
+            logger.error(f"LLM call failed: {str(e)}")
+            # Fallback to placeholder
+            result = f"Chain-of-thought response to: {request.prompt}"
+            reasoning = [
+                "Step 1: Analyzed the task requirements",
+                "Step 2: Broke down the problem into components",
+                "Step 3: Solved each component systematically",
+                "Step 4: Synthesized the final answer"
+            ]
+            metadata = {"technique": "chain_of_thought", "reasoning_steps": len(reasoning), "error": str(e)}
         
         return {
             "result": result,
             "reasoning": reasoning,
-            "metadata": {"technique": "chain_of_thought", "reasoning_steps": len(reasoning)}
+            "metadata": metadata
         }
 
 class SelfConsistencyAgent(BaseAgent):
