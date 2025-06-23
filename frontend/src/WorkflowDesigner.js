@@ -99,10 +99,20 @@ const WorkflowDesigner = () => {
       const response = await axios.post(`${API}/workflows`, workflowData);
       setCurrentWorkflow(response.data);
       await fetchWorkflows();
-      alert("Workflow created successfully!");
+      
+      // Show success message and switch to workflows tab
+      alert(`Workflow "${workflowName}" created successfully!`);
+      setActiveTab("workflows");
+      
+      // Reset form
+      setWorkflowName("");
+      setWorkflowDescription("");
+      setSteps([]);
+      
     } catch (error) {
       console.error("Error creating workflow:", error);
-      alert("Error creating workflow");
+      const errorMessage = error.response?.data?.detail || error.message || "Unknown error occurred";
+      alert(`Failed to create workflow: ${errorMessage}`);
     } finally {
       setLoading(false);
     }
