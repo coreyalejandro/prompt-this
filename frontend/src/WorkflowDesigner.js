@@ -139,7 +139,19 @@ const WorkflowDesigner = () => {
     setLoading(true);
     try {
       const response = await axios.post(`${API}/workflows/${workflowId}/execute`);
-      alert(`Workflow execution started! Message: ${response.data.message}`);
+      
+      // Show detailed explanation of what's happening
+      alert(`🚀 Workflow Execution Started!
+
+What happens during execution:
+• Each step runs in the defined order
+• Results from previous steps enhance subsequent prompts
+• Dependencies are respected (steps wait for prerequisites)
+• You'll see real-time status updates
+
+Message: ${response.data.message}
+
+Refresh this page in a few seconds to see progress!`);
       
       // Refresh workflows to see status updates
       setTimeout(() => {
@@ -159,9 +171,38 @@ const WorkflowDesigner = () => {
     } catch (error) {
       console.error("Error executing workflow:", error);
       const errorMessage = error.response?.data?.detail || error.message || "Unknown error occurred";
-      alert(`Failed to execute workflow: ${errorMessage}`);
+      alert(`❌ Failed to execute workflow: ${errorMessage}`);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const viewWorkflowResults = async (workflowId) => {
+    try {
+      const response = await axios.get(`${API}/workflows/${workflowId}`);
+      const workflow = response.data;
+      
+      if (workflow.status !== 'completed') {
+        alert("Workflow is not completed yet. Please wait for execution to finish.");
+        return;
+      }
+
+      // Create a detailed results display
+      let resultsText = `📊 Workflow Results: ${workflow.name}\n\n`;
+      
+      workflow.steps.forEach((step, index) => {
+        resultsText += `Step ${index + 1}: ${step.name}\n`;
+        resultsText += `Status: ${step.status}\n`;
+        if (step.result) {
+          resultsText += `Result: ${step.result.substring(0, 200)}${step.result.length > 200 ? '...' : ''}\n`;
+        }
+        resultsText += `\n`;
+      });
+
+      alert(resultsText);
+    } catch (error) {
+      console.error("Error fetching workflow results:", error);
+      alert("Failed to fetch workflow results");
     }
   };
 
