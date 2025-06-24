@@ -36,6 +36,22 @@ Transform the D.A.I.R. Prompt Engineering Guide into practical, modularized agen
 - [Troubleshooting](#troubleshooting)
 - [Contributing](#contributing)
 
+---
+
+## 🚀 Quick Demo
+
+```bash
+# 🔥 Get started in 3 steps
+git clone https://github.com/yourusername/promptly.git
+cd promptly && ./scripts/quick-start.sh
+# 🎉 Open http://localhost:3000 and explore!
+```
+
+**Try it now:**
+1. **Test Agents** → Select any of 10 specialized prompt engineering agents
+2. **Create Workflows** → Chain agents together for complex reasoning
+3. **Explore Templates** → Use pre-built patterns for common tasks
+
 ## 🎯 About Promptly
 
 Promptly is a comprehensive, modularized agentic platform that transforms the D.A.I.R. Prompt Engineering Guide into practical, working agents with advanced workflow orchestration capabilities.
