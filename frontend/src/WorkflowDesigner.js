@@ -475,9 +475,18 @@ const WorkflowDesigner = () => {
                   <button
                     onClick={() => executeWorkflow(workflow.id)}
                     disabled={loading || workflow.status === 'running'}
-                    className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 disabled:bg-gray-400"
+                    className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 disabled:bg-gray-400 transition-colors"
+                    title="Execute this workflow step-by-step"
                   >
-                    Execute
+                    {workflow.status === 'running' ? 'Running...' : 'Execute'}
+                  </button>
+                  <button
+                    onClick={() => viewWorkflowResults(workflow.id)}
+                    disabled={workflow.status !== 'completed'}
+                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-gray-400 transition-colors"
+                    title="View detailed results"
+                  >
+                    View Results
                   </button>
                 </div>
               </div>
