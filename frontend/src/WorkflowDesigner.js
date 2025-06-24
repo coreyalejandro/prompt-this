@@ -487,6 +487,22 @@ Refresh this page in a few seconds to see progress!`);
             </div>
           )}
 
+          {workflows.length > 0 && (
+            <div className="bg-gradient-to-r from-green-50 to-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+              <h3 className="font-medium text-blue-800 mb-2">🚀 What Does "Execute" Mean?</h3>
+              <div className="text-blue-700 text-sm space-y-1">
+                <p><strong>Workflow execution runs your multi-agent pipeline:</strong></p>
+                <ul className="list-disc list-inside ml-4 space-y-1">
+                  <li><strong>Sequential Processing:</strong> Each step runs in order, respecting dependencies</li>
+                  <li><strong>Result Passing:</strong> Output from previous steps enhances subsequent prompts</li>
+                  <li><strong>Real-time Progress:</strong> Watch as each agent completes its task</li>
+                  <li><strong>Comprehensive Results:</strong> Get detailed outputs from each step</li>
+                </ul>
+                <p className="mt-2"><strong>Example:</strong> A 3-step workflow might analyze content → reason about it → fact-check the analysis</p>
+              </div>
+            </div>
+          )}
+
           {workflows.map(workflow => (
             <div key={workflow.id} className="bg-white rounded-lg shadow-md p-6">
               <div className="flex justify-between items-start">
