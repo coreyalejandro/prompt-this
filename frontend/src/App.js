@@ -4,6 +4,8 @@ import axios from "axios";
 import "./App.css";
 import WorkflowDesigner from "./WorkflowDesigner";
 import OnboardingTutorial from "./OnboardingTutorial";
+import { AuthProvider, useAuth } from "./AuthContext";
+import LoginModal from "./LoginModal";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
