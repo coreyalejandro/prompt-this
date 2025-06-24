@@ -519,16 +519,17 @@ Refresh this page in a few seconds to see progress!`);
                     className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 disabled:bg-gray-400 transition-colors"
                     title="Execute this workflow step-by-step"
                   >
-                    {workflow.status === 'running' ? 'Running...' : 'Execute'}
+                    {workflow.status === 'running' ? '⏳ Running...' : '▶️ Execute'}
                   </button>
-                  <button
-                    onClick={() => viewWorkflowResults(workflow.id)}
-                    disabled={workflow.status !== 'completed'}
-                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-gray-400 transition-colors"
-                    title="View detailed results"
-                  >
-                    View Results
-                  </button>
+                  {workflow.status === 'completed' && (
+                    <button
+                      onClick={() => viewWorkflowResults(workflow.id)}
+                      className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
+                      title="View detailed results from all steps"
+                    >
+                      📊 View Results
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
