@@ -15,6 +15,8 @@ const WorkflowDesigner = () => {
   const [steps, setSteps] = useState([]);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("designer");
+  
+  const { user, isAuthenticated } = useAuth();
 
   useEffect(() => {
     fetchAgents();
