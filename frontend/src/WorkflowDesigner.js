@@ -36,7 +36,11 @@ const WorkflowDesigner = () => {
   const fetchWorkflows = async () => {
     try {
       const response = await axios.get(`${API}/workflows`);
-      setWorkflows(response.data.workflows);
+      // Filter workflows for the current user
+      const userWorkflows = response.data.workflows.filter(workflow => 
+        workflow.session_id && workflow.session_id.includes(user?.id || 'anonymous')
+      );
+      setWorkflows(userWorkflows);
     } catch (error) {
       console.error("Error fetching workflows:", error);
       alert("Failed to load workflows. Please try again.");
