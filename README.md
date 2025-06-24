@@ -1,8 +1,29 @@
 # 🤖 Promptly
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![Node.js](https://img.shields.io/badge/node.js-18+-green.svg)](https://nodejs.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-red.svg)](https://fastapi.tiangolo.com/)
+[![React](https://img.shields.io/badge/React-19+-blue.svg)](https://reactjs.org/)
+
 **The Ultimate Prompt Engineering Agent Platform**
 
 Transform the D.A.I.R. Prompt Engineering Guide into practical, modularized agents with advanced workflow orchestration.
+
+---
+
+## ✨ Features at a Glance
+
+🎯 **10 Specialized Agents** | 🔗 **Workflow Orchestration** | 🚀 **Multi-LLM Support** | 💡 **Interactive Tutorial**
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Agents-10%20Specialized-brightgreen" alt="10 Agents">
+  <img src="https://img.shields.io/badge/Providers-OpenAI%20%7C%20Anthropic%20%7C%20Local-blue" alt="LLM Providers">
+  <img src="https://img.shields.io/badge/Workflows-Visual%20Designer-purple" alt="Workflow Designer">
+  <img src="https://img.shields.io/badge/Templates-3%20Pre--built-orange" alt="Templates">
+</p>
+
+---
 
 ## 📋 Table of Contents
 - [Overview](#overview)
