@@ -10,6 +10,14 @@
 
 Transform the D.A.I.R. Prompt Engineering Guide into practical, modularized agents with advanced workflow orchestration.
 
+## 📄 Important Disclaimer
+
+**⚠️ This project is NOT affiliated with D.A.I.R. AI.** 
+
+Promptly is an independent, open-source implementation inspired by prompt engineering concepts. The creator makes **no claims** to the original Prompt Engineering Guide and is **not affiliated** with D.A.I.R. AI. This project was created as a way to make prompt engineering techniques more accessible and as a thank you to Elvis, co-founder of D.A.I.R., for being an outstanding leader in the AI field.
+
+**All credit for original prompt engineering research belongs to D.A.I.R. AI and the broader research community.** See [DISCLAIMER.md](DISCLAIMER.md) for complete details.
+
 ---
 
 ## ✨ Features at a Glance
