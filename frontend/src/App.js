@@ -406,8 +406,10 @@ const AgentInfo = ({ agentType }) => {
 };
 
 // Main App Component
-const App = () => {
+const AppContent = () => {
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showLogin, setShowLogin] = useState(false);
+  const { user, isAuthenticated, logout } = useAuth();
 
   useEffect(() => {
     // Check if user has completed onboarding
@@ -415,10 +417,21 @@ const App = () => {
     if (completed !== 'true') {
       setShowOnboarding(true);
     }
-  }, []);
+    
+    // Check if user needs to log in
+    if (!isAuthenticated) {
+      // Show login modal after a short delay to let the UI load
+      setTimeout(() => setShowLogin(true), 1000);
+    }
+  }, [isAuthenticated]);
 
   const handleOnboardingComplete = () => {
     setShowOnboarding(false);
+  };
+
+  const handleTutorialClick = () => {
+    console.log("Tutorial button clicked"); // Debug log
+    setShowOnboarding(true);
   };
 
   return (
@@ -431,7 +444,7 @@ const App = () => {
               <Link to="/" className="text-xl font-bold text-gray-800">
                 🤖 Promptly - Prompt Engineering Agent Platform
               </Link>
-              <nav className="flex space-x-6">
+              <nav className="flex items-center space-x-6">
                 <Link to="/" className="text-gray-600 hover:text-gray-800">
                   Agents
                 </Link>
@@ -439,11 +452,24 @@ const App = () => {
                   Workflows
                 </Link>
                 <button
-                  onClick={() => setShowOnboarding(true)}
-                  className="text-gray-600 hover:text-gray-800"
+                  onClick={handleTutorialClick}
+                  className="text-gray-600 hover:text-gray-800 transition-colors"
                 >
                   📚 Tutorial
                 </button>
+                {isAuthenticated && (
+                  <div className="flex items-center space-x-4">
+                    <span className="text-sm text-gray-600">
+                      👋 {user?.username}
+                    </span>
+                    <button
+                      onClick={logout}
+                      className="text-sm text-gray-500 hover:text-gray-700"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                )}
               </nav>
             </div>
           </div>
@@ -469,12 +495,23 @@ const App = () => {
           </div>
         </footer>
 
+        {/* Login Modal */}
+        <LoginModal isOpen={showLogin} onClose={() => setShowLogin(false)} />
+
         {/* Onboarding Tutorial */}
         {showOnboarding && (
           <OnboardingTutorial onComplete={handleOnboardingComplete} />
         )}
       </BrowserRouter>
     </div>
+  );
+};
+
+const App = () => {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 };
 
