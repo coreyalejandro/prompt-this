@@ -428,6 +428,24 @@ const WorkflowDesigner = () => {
       {/* Workflows Tab */}
       {activeTab === "workflows" && (
         <div className="space-y-4">
+          {!isAuthenticated && (
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+              <h3 className="font-medium text-yellow-800 mb-2">🔐 Authentication Required</h3>
+              <p className="text-yellow-700 text-sm">
+                Please sign in to save and view your personal workflows. Your workflows will be saved locally and accessible across sessions.
+              </p>
+            </div>
+          )}
+
+          {isAuthenticated && user && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+              <h3 className="font-medium text-blue-800 mb-1">👋 Welcome back, {user.username}!</h3>
+              <p className="text-blue-700 text-sm">
+                Here are your personal workflows. Create new ones in the Designer tab.
+              </p>
+            </div>
+          )}
+
           {workflows.map(workflow => (
             <div key={workflow.id} className="bg-white rounded-lg shadow-md p-6">
               <div className="flex justify-between items-start">
@@ -448,6 +466,9 @@ const WorkflowDesigner = () => {
                     }`}>
                       {workflow.status || 'pending'}
                     </span>
+                    <span className="text-xs text-gray-400">
+                      Created: {new Date(workflow.created_at).toLocaleDateString()}
+                    </span>
                   </div>
                 </div>
                 <div className="space-x-2">
@@ -463,9 +484,25 @@ const WorkflowDesigner = () => {
             </div>
           ))}
 
-          {workflows.length === 0 && (
+          {workflows.length === 0 && isAuthenticated && (
             <div className="text-center py-12 text-gray-500">
-              <p>No workflows created yet. Use the designer to create your first workflow.</p>
+              <div className="text-4xl mb-4">📝</div>
+              <p className="text-lg mb-2">No workflows created yet</p>
+              <p className="text-sm mb-4">Use the Designer tab to create your first workflow!</p>
+              <button
+                onClick={() => setActiveTab("designer")}
+                className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600"
+              >
+                Create Your First Workflow
+              </button>
+            </div>
+          )}
+
+          {workflows.length === 0 && !isAuthenticated && (
+            <div className="text-center py-12 text-gray-500">
+              <div className="text-4xl mb-4">🔐</div>
+              <p className="text-lg mb-2">Sign in to view your workflows</p>
+              <p className="text-sm">Your personal workflows will appear here once you're authenticated.</p>
             </div>
           )}
         </div>
