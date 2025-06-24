@@ -86,6 +86,11 @@ const WorkflowDesigner = () => {
       return;
     }
 
+    if (!isAuthenticated) {
+      alert("Please sign in to save workflows");
+      return;
+    }
+
     setLoading(true);
     try {
       const workflowData = {
@@ -100,7 +105,7 @@ const WorkflowDesigner = () => {
           depends_on: step.depends_on || [],
           parameters: step.parameters || {}
         })),
-        session_id: `workflow_${Date.now()}`
+        session_id: `user_${user.id}_${Date.now()}`
       };
 
       const response = await axios.post(`${API}/workflows`, workflowData);
