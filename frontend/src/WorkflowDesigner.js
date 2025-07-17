@@ -141,7 +141,7 @@ const WorkflowDesigner = () => {
       const response = await axios.post(`${API}/workflows/${workflowId}/execute`);
       
       // Show detailed explanation of what's happening
-      alert(`🚀 Workflow Execution Started!
+      alert(`Workflow Execution Started!
 
 What happens during execution:
 • Each step runs in the defined order
@@ -188,7 +188,7 @@ Refresh this page in a few seconds to see progress!`);
       }
 
       // Create a detailed results display
-      let resultsText = `📊 Workflow Results: ${workflow.name}\n\n`;
+      let resultsText = `Workflow Results: ${workflow.name}\n\n`;
       
       workflow.steps.forEach((step, index) => {
         resultsText += `Step ${index + 1}: ${step.name}\n`;
@@ -225,7 +225,7 @@ Refresh this page in a few seconds to see progress!`);
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-gray-800 mb-8">🔗 Workflow Orchestration</h1>
+      <h1 className="text-3xl font-bold text-gray-800 mb-8">Workflow Orchestration</h1>
 
       {/* Tab Navigation */}
       <div className="mb-6">
@@ -270,7 +270,7 @@ Refresh this page in a few seconds to see progress!`);
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Workflow Configuration */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="glass rounded-lg shadow-md p-6">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl font-semibold">Workflow Designer</h2>
                 <div className="space-x-2">
@@ -428,7 +428,7 @@ Refresh this page in a few seconds to see progress!`);
 
           {/* Agent Library Sidebar */}
           <div>
-            <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="glass rounded-lg shadow-md p-6">
               <h3 className="text-lg font-semibold mb-4">Available Agents</h3>
               <div className="space-y-3">
                 {agents.map(agent => (
@@ -447,7 +447,7 @@ Refresh this page in a few seconds to see progress!`);
       {activeTab === "templates" && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {templates.map(template => (
-            <div key={template.id} className="bg-white rounded-lg shadow-md p-6">
+            <div key={template.id} className="glass rounded-lg shadow-md p-6">
               <h3 className="text-xl font-semibold mb-2">{template.name}</h3>
               <p className="text-gray-600 mb-4">{template.description}</p>
               <div className="mb-4">
@@ -480,7 +480,7 @@ Refresh this page in a few seconds to see progress!`);
 
           {isAuthenticated && user && (
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-              <h3 className="font-medium text-blue-800 mb-1">👋 Welcome back, {user.username}!</h3>
+              <h3 className="font-medium text-blue-800 mb-1">Welcome back, {user.username}!</h3>
               <p className="text-blue-700 text-sm">
                 Here are your personal workflows. Create new ones in the Designer tab.
               </p>
@@ -489,7 +489,7 @@ Refresh this page in a few seconds to see progress!`);
 
           {workflows.length > 0 && (
             <div className="bg-gradient-to-r from-green-50 to-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-              <h3 className="font-medium text-blue-800 mb-2">🚀 What Does "Execute" Mean?</h3>
+              <h3 className="font-medium text-blue-800 mb-2">What Does "Execute" Mean?</h3>
               <div className="text-blue-700 text-sm space-y-1">
                 <p><strong>Workflow execution runs your multi-agent pipeline:</strong></p>
                 <ul className="list-disc list-inside ml-4 space-y-1">
@@ -504,7 +504,7 @@ Refresh this page in a few seconds to see progress!`);
           )}
 
           {workflows.map(workflow => (
-            <div key={workflow.id} className="bg-white rounded-lg shadow-md p-6">
+            <div key={workflow.id} className="glass rounded-lg shadow-md p-6">
               <div className="flex justify-between items-start">
                 <div>
                   <h3 className="text-xl font-semibold">{workflow.name}</h3>
@@ -535,7 +535,7 @@ Refresh this page in a few seconds to see progress!`);
                     className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 disabled:bg-gray-400 transition-colors"
                     title="Execute this workflow step-by-step"
                   >
-                    {workflow.status === 'running' ? '⏳ Running...' : '▶️ Execute'}
+                    {workflow.status === 'running' ? 'Running...' : 'Execute'}
                   </button>
                   {workflow.status === 'completed' && (
                     <button
@@ -543,7 +543,7 @@ Refresh this page in a few seconds to see progress!`);
                       className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
                       title="View detailed results from all steps"
                     >
-                      📊 View Results
+                      View Results
                     </button>
                   )}
                 </div>

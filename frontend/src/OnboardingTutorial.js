@@ -8,7 +8,7 @@ const OnboardingTutorial = ({ onComplete }) => {
   const tutorialSteps = [
     {
       id: "welcome",
-      title: "Welcome to the Prompt Engineering Agent Platform! 🎉",
+      title: "Welcome to the Prompt Engineering Agent Platform!",
       content: (
         <div className="space-y-4">
           <p className="text-lg">
@@ -17,10 +17,10 @@ const OnboardingTutorial = ({ onComplete }) => {
           <div className="bg-blue-50 p-4 rounded-lg">
             <h4 className="font-semibold text-blue-800 mb-2">What you can do:</h4>
             <ul className="text-blue-700 space-y-1">
-              <li>✅ Test 10 specialized prompt engineering agents</li>
-              <li>✅ Create complex multi-agent workflows</li>
-              <li>✅ Use OpenAI, Anthropic, or local models</li>
-              <li>✅ Build sophisticated reasoning pipelines</li>
+              <li>Test 10 specialized prompt engineering agents</li>
+              <li>Create complex multi-agent workflows</li>
+              <li>Use OpenAI, Anthropic, or local models</li>
+              <li>Build sophisticated reasoning pipelines</li>
             </ul>
           </div>
           <p className="text-gray-600">
@@ -33,7 +33,7 @@ const OnboardingTutorial = ({ onComplete }) => {
     },
     {
       id: "agents-overview",
-      title: "Agent Library Overview 🤖",
+      title: "Agent Library Overview",
       content: (
         <div className="space-y-4">
           <p>The Agent Library contains 10 specialized agents based on prompt engineering techniques:</p>
@@ -72,7 +72,7 @@ const OnboardingTutorial = ({ onComplete }) => {
     },
     {
       id: "testing-agents",
-      title: "Testing Individual Agents 🧪",
+      title: "Testing Individual Agents",
       content: (
         <div className="space-y-4">
           <p>Let's learn how to test an individual agent:</p>
@@ -89,7 +89,7 @@ const OnboardingTutorial = ({ onComplete }) => {
           </div>
           
           <div className="bg-yellow-50 p-3 rounded-lg">
-            <h4 className="font-semibold text-yellow-800 mb-1">💡 Pro Tip:</h4>
+            <h4 className="font-semibold text-yellow-800 mb-1">Pro Tip:</h4>
             <p className="text-yellow-700 text-sm">
               Try the same prompt with different agents to see how each technique approaches the problem differently!
             </p>
@@ -105,7 +105,7 @@ const OnboardingTutorial = ({ onComplete }) => {
     },
     {
       id: "workflow-intro",
-      title: "Workflow Orchestration 🔗",
+      title: "Workflow Orchestration",
       content: (
         <div className="space-y-4">
           <p>The real power comes from chaining agents together in workflows:</p>
@@ -113,10 +113,10 @@ const OnboardingTutorial = ({ onComplete }) => {
           <div className="bg-indigo-50 p-4 rounded-lg">
             <h4 className="font-semibold text-indigo-800 mb-2">Workflow Benefits:</h4>
             <ul className="text-indigo-700 space-y-1">
-              <li>🔄 <strong>Sequential Processing:</strong> Results from one agent feed into the next</li>
-              <li>⚡ <strong>Parallel Execution:</strong> Run independent agents simultaneously</li>
-              <li>🎯 <strong>Dependency Management:</strong> Complex workflows with smart routing</li>
-              <li>📊 <strong>Real-time Monitoring:</strong> Watch your workflow execute step by step</li>
+              <li><strong>Sequential Processing:</strong> Results from one agent feed into the next</li>
+              <li><strong>Parallel Execution:</strong> Run independent agents simultaneously</li>
+              <li><strong>Dependency Management:</strong> Complex workflows with smart routing</li>
+              <li><strong>Real-time Monitoring:</strong> Watch your workflow execute step by step</li>
             </ul>
           </div>
           
@@ -133,14 +133,14 @@ const OnboardingTutorial = ({ onComplete }) => {
     },
     {
       id: "workflow-templates",
-      title: "Pre-built Templates 📋",
+      title: "Pre-built Templates",
       content: (
         <div className="space-y-4">
           <p>Get started quickly with our pre-built workflow templates:</p>
           
           <div className="space-y-3">
             <div className="border border-blue-200 p-3 rounded-lg">
-              <h4 className="font-semibold text-blue-800">📊 Content Analysis Pipeline</h4>
+              <h4 className="font-semibold text-blue-800">Content Analysis Pipeline</h4>
               <p className="text-sm text-gray-600">
                 Zero-Shot Analysis → Chain-of-Thought → Factuality Check
               </p>
@@ -150,7 +150,7 @@ const OnboardingTutorial = ({ onComplete }) => {
             </div>
             
             <div className="border border-green-200 p-3 rounded-lg">
-              <h4 className="font-semibold text-green-800">🧩 Problem Solving</h4>
+              <h4 className="font-semibold text-green-800">Problem Solving</h4>
               <p className="text-sm text-gray-600">
                 Tree-of-Thoughts → Program-Aided → Self-Consistency
               </p>
@@ -160,7 +160,7 @@ const OnboardingTutorial = ({ onComplete }) => {
             </div>
             
             <div className="border border-purple-200 p-3 rounded-lg">
-              <h4 className="font-semibold text-purple-800">✍️ Content Generation</h4>
+              <h4 className="font-semibold text-purple-800">Content Generation</h4>
               <p className="text-sm text-gray-600">
                 Initial Generation → Auto-Prompt → RAG Enhancement
               </p>
@@ -180,7 +180,7 @@ const OnboardingTutorial = ({ onComplete }) => {
     },
     {
       id: "custom-workflows",
-      title: "Creating Custom Workflows 🛠️",
+      title: "Creating Custom Workflows",
       content: (
         <div className="space-y-4">
           <p>Build your own workflows tailored to your specific needs:</p>
@@ -197,7 +197,7 @@ const OnboardingTutorial = ({ onComplete }) => {
           </div>
           
           <div className="bg-green-50 p-3 rounded-lg">
-            <h4 className="font-semibold text-green-800 mb-1">🎯 Best Practices:</h4>
+            <h4 className="font-semibold text-green-800 mb-1">Best Practices:</h4>
             <ul className="text-green-700 text-sm space-y-1">
               <li>• Start simple with 2-3 steps</li>
               <li>• Use clear, descriptive step names</li>
@@ -212,35 +212,35 @@ const OnboardingTutorial = ({ onComplete }) => {
     },
     {
       id: "advanced-features",
-      title: "Advanced Features 🚀",
+      title: "Advanced Features",
       content: (
         <div className="space-y-4">
           <p>Unlock the full potential with these advanced capabilities:</p>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="bg-blue-50 p-3 rounded-lg">
-              <h4 className="font-semibold text-blue-800 mb-2">🔄 Result Passing</h4>
+              <h4 className="font-semibold text-blue-800 mb-2">Result Passing</h4>
               <p className="text-blue-700 text-sm">
                 Results from previous steps automatically enhance prompts for dependent steps.
               </p>
             </div>
             
             <div className="bg-red-50 p-3 rounded-lg">
-              <h4 className="font-semibold text-red-800 mb-2">📊 Real-time Monitoring</h4>
+              <h4 className="font-semibold text-red-800 mb-2">Real-time Monitoring</h4>
               <p className="text-red-700 text-sm">
                 Watch workflows execute with live status updates and progress tracking.
               </p>
             </div>
             
             <div className="bg-yellow-50 p-3 rounded-lg">
-              <h4 className="font-semibold text-yellow-800 mb-2">🔍 Auto-Optimization</h4>
+              <h4 className="font-semibold text-yellow-800 mb-2">Auto-Optimization</h4>
               <p className="text-yellow-700 text-sm">
                 The Auto-Prompt agent automatically improves prompts for better results.
               </p>
             </div>
             
             <div className="bg-green-50 p-3 rounded-lg">
-              <h4 className="font-semibold text-green-800 mb-2">🧠 Multi-Provider</h4>
+              <h4 className="font-semibold text-green-800 mb-2">Multi-Provider</h4>
               <p className="text-green-700 text-sm">
                 Use different LLM providers within the same workflow for optimal results.
               </p>
@@ -248,7 +248,7 @@ const OnboardingTutorial = ({ onComplete }) => {
           </div>
           
           <div className="bg-purple-50 p-4 rounded-lg">
-            <h4 className="font-semibold text-purple-800 mb-2">💡 Expert Tips:</h4>
+            <h4 className="font-semibold text-purple-800 mb-2">Expert Tips:</h4>
             <ul className="text-purple-700 text-sm space-y-1">
               <li>• Use Chain-of-Thought for complex reasoning tasks</li>
               <li>• Try RAG agent when you need external knowledge</li>
@@ -263,11 +263,10 @@ const OnboardingTutorial = ({ onComplete }) => {
     },
     {
       id: "completion",
-      title: "You're All Set! 🎯",
+      title: "You're All Set!",
       content: (
         <div className="space-y-4">
           <div className="text-center">
-            <div className="text-6xl mb-4">🎉</div>
             <h3 className="text-xl font-semibold text-gray-800 mb-2">
               Welcome to the Future of Prompt Engineering!
             </h3>
@@ -276,17 +275,17 @@ const OnboardingTutorial = ({ onComplete }) => {
           <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-4 rounded-lg">
             <h4 className="font-semibold mb-2">Quick Start Options:</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <Link 
-                to="/" 
+              <Link
+                to="/"
                 className="bg-blue-500 text-white p-3 rounded-lg text-center hover:bg-blue-600 transition-colors"
               >
-                🤖 Explore Agents
+                Explore Agents
               </Link>
-              <Link 
-                to="/workflows" 
+              <Link
+                to="/workflows"
                 className="bg-purple-500 text-white p-3 rounded-lg text-center hover:bg-purple-600 transition-colors"
               >
-                🔗 Try Workflows
+                Try Workflows
               </Link>
             </div>
           </div>
@@ -294,16 +293,16 @@ const OnboardingTutorial = ({ onComplete }) => {
           <div className="bg-gray-50 p-4 rounded-lg">
             <h4 className="font-semibold mb-2">Need Help?</h4>
             <ul className="text-gray-700 text-sm space-y-1">
-              <li>📚 Check the README.md for detailed documentation</li>
-              <li>🐛 Each agent shows example usage and descriptions</li>
-              <li>💡 Hover over elements for additional tips</li>
-              <li>🔄 You can replay this tutorial anytime from settings</li>
+              <li>Check the README.md for detailed documentation</li>
+              <li>Each agent shows example usage and descriptions</li>
+              <li>Hover over elements for additional tips</li>
+              <li>You can replay this tutorial anytime from settings</li>
             </ul>
           </div>
           
           <div className="text-center">
             <p className="text-gray-600">
-              Happy prompt engineering! 🚀
+              Happy prompt engineering!
             </p>
           </div>
         </div>
@@ -357,7 +356,7 @@ const OnboardingTutorial = ({ onComplete }) => {
         onClick={restartTutorial}
         className="fixed bottom-4 right-4 bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-blue-600 transition-colors z-50"
       >
-        📚 Tutorial
+        Tutorial
       </button>
     );
   }
@@ -366,7 +365,7 @@ const OnboardingTutorial = ({ onComplete }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-90vh overflow-y-auto">
+      <div className="glass rounded-lg shadow-xl max-w-2xl w-full max-h-90vh overflow-y-auto">
         {/* Header */}
         <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-6 rounded-t-lg">
           <div className="flex justify-between items-start">

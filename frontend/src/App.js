@@ -43,7 +43,7 @@ const AgentLibrary = () => {
       <h1 className="text-3xl font-bold text-gray-800 mb-8">Agent Library</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {agents.map((agent) => (
-          <div key={agent.type} className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+          <div key={agent.type} className="glass rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
             <h3 className="text-xl font-semibold text-gray-800 mb-2">{agent.name}</h3>
             <p className="text-gray-600 mb-4">{agent.description}</p>
             <div className="flex space-x-2">
@@ -150,7 +150,7 @@ const AgentTester = ({ agentType }) => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Input Form */}
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="glass rounded-lg shadow-md p-6">
           <h2 className="text-xl font-semibold mb-4">Test Configuration</h2>
           
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -271,7 +271,7 @@ const AgentTester = ({ agentType }) => {
         </div>
 
         {/* Response Display */}
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="glass rounded-lg shadow-md p-6">
           <h2 className="text-xl font-semibold mb-4">Response</h2>
           
           {loading && (
@@ -383,7 +383,7 @@ const AgentInfo = ({ agentType }) => {
         <Link to="/" className="text-blue-500 hover:text-blue-700">← Back to Library</Link>
       </div>
       
-      <div className="bg-white rounded-lg shadow-md p-8">
+      <div className="glass rounded-lg shadow-md p-8">
         <h1 className="text-3xl font-bold text-gray-800 mb-4">{agent.name}</h1>
         <p className="text-gray-600 mb-6">{agent.description}</p>
         
@@ -435,14 +435,14 @@ const AppContent = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       <BrowserRouter>
         {/* Header */}
-        <header className="bg-white shadow-sm">
+        <header className="bg-white/70 dark:bg-gray-800/50 backdrop-blur-md shadow-sm">
           <div className="container mx-auto px-4 py-4">
             <div className="flex justify-between items-center">
-              <Link to="/" className="text-xl font-bold text-gray-800">
-                🤖 Promptly - Prompt Engineering Agent Platform
+              <Link to="/" className="text-xl font-bold text-gray-800 dark:text-gray-100">
+                Promptly - Prompt Engineering Agent Platform
               </Link>
               <nav className="flex items-center space-x-6">
                 <Link to="/" className="text-gray-600 hover:text-gray-800">
@@ -453,14 +453,14 @@ const AppContent = () => {
                 </Link>
                 <button
                   onClick={handleTutorialClick}
-                  className="text-gray-600 hover:text-gray-800 transition-colors"
+                  className="text-gray-600 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
                 >
-                  📚 Tutorial
+                  Tutorial
                 </button>
                 {isAuthenticated && (
                   <div className="flex items-center space-x-4">
-                    <span className="text-sm text-gray-600">
-                      👋 {user?.username}
+                    <span className="text-sm text-gray-600 dark:text-gray-300">
+                      {user?.username}
                     </span>
                     <button
                       onClick={logout}
@@ -486,7 +486,7 @@ const AppContent = () => {
         {/* Footer */}
         <footer className="bg-white border-t mt-12">
           <div className="container mx-auto px-4 py-6 text-center text-gray-600">
-            <p>Built with ❤️ using FastAPI + React | Promptly - Prompt Engineering Done Right</p>
+            <p>Built with FastAPI + React | Promptly - Prompt Engineering Done Right</p>
             <div className="mt-2 text-sm space-x-4">
               <a href="/docs/README.md" className="text-blue-500 hover:text-blue-700">Documentation</a>
               <a href="/docs/API_DOCUMENTATION.md" className="text-blue-500 hover:text-blue-700">API Docs</a>

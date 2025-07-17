@@ -22,7 +22,7 @@ const LoginModal = ({ isOpen, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+      <div className="glass rounded-lg shadow-xl max-w-md w-full p-6">
         <h2 className="text-2xl font-bold text-gray-800 mb-4">Welcome to Promptly!</h2>
         <p className="text-gray-600 mb-6">
           To save your workflows and track your progress, please choose how you'd like to continue:
@@ -62,7 +62,7 @@ const LoginModal = ({ isOpen, onClose }) => {
         </form>
 
         <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-          <h3 className="font-medium text-blue-800 mb-2">💡 Why sign in?</h3>
+          <h3 className="font-medium text-blue-800 mb-2">Why sign in?</h3>
           <ul className="text-sm text-blue-700 space-y-1">
             <li>• Save your custom workflows</li>
             <li>• Track your agent usage</li>
