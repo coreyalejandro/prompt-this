@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# Promptly Quick Start Script
-# This script sets up Promptly for local development
+# Prompt-This Quick Start Script
+# This script sets up Prompt-This for local development
 
 set -e
 
-echo "🤖 Welcome to Promptly Setup!"
+echo "🤖 Welcome to Prompt-This Setup!"
 echo "================================"
 
 # Check requirements
@@ -73,7 +73,7 @@ if [ ! -f ".env" ]; then
     echo "Creating backend .env file..."
     cat > .env << EOF
 MONGO_URL="mongodb://localhost:27017"
-DB_NAME="promptly_database"
+DB_NAME="prompt_this_database"
 
 # LLM API Keys (optional - add your keys to enable providers)
 # OPENAI_API_KEY=your_openai_api_key_here
@@ -126,15 +126,15 @@ sleep 3
 # Create start script
 echo ""
 echo "📝 Creating start script..."
-cat > start-promptly.sh << 'EOF'
+cat > start-prompt-this.sh << 'EOF'
 #!/bin/bash
 
-echo "🤖 Starting Promptly..."
+echo "🤖 Starting Prompt-This..."
 
 # Function to kill background processes on exit
 cleanup() {
     echo ""
-    echo "🛑 Stopping Promptly..."
+    echo "🛑 Stopping Prompt-This..."
     kill $BACKEND_PID $FRONTEND_PID 2>/dev/null
     exit 0
 }
@@ -161,7 +161,7 @@ FRONTEND_PID=$!
 cd ..
 
 echo ""
-echo "✅ Promptly is starting up!"
+echo "✅ Prompt-This is starting up!"
 echo "🌐 Frontend: http://localhost:3000"
 echo "📡 Backend API: http://localhost:8001"
 echo "📖 API Docs: http://localhost:8001/docs"
@@ -176,15 +176,15 @@ echo "Press Ctrl+C to stop all services"
 wait $BACKEND_PID $FRONTEND_PID
 EOF
 
-chmod +x start-promptly.sh
+chmod +x start-prompt-this.sh
 
 # Success message
 echo ""
-echo "🎉 Promptly setup complete!"
+echo "🎉 Prompt-This setup complete!"
 echo "=========================="
 echo ""
-echo "🚀 To start Promptly:"
-echo "   ./start-promptly.sh"
+echo "🚀 To start Prompt-This:"
+echo "   ./start-prompt-this.sh"
 echo ""
 echo "🌐 Once started, open: http://localhost:3000"
 echo ""
@@ -192,7 +192,7 @@ echo "💡 First time? The interactive tutorial will guide you!"
 echo ""
 echo "📚 Documentation:"
 echo "   README.md - Overview and features"
-echo "   docs/USER_GUIDE.md - How to use Promptly"
+echo "   docs/USER_GUIDE.md - How to use Prompt-This"
 echo "   docs/API_DOCUMENTATION.md - API reference"
 echo ""
 echo "🔑 Optional: Add your API keys to backend/.env for full LLM support"

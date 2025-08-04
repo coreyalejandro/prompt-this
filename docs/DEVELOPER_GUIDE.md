@@ -1,6 +1,6 @@
 # 👨‍💻 Developer Guide
 
-Complete guide for developers working on the Prompt Engineering Agent Platform.
+Complete guide for developers working on the Prompt-This Platform.
 
 ## 🏗️ Architecture Overview
 
@@ -94,7 +94,7 @@ The platform follows a modular microservices architecture:
 **1. Clone and Setup**
 ```bash
 git clone <repository-url>
-cd prompt-engineering-platform
+cd prompt-this
 
 # Backend setup
 cd backend
@@ -1039,4 +1039,4 @@ test(frontend): add component tests for workflow designer
 
 ---
 
-This developer guide provides the foundation for contributing to and extending the Prompt Engineering Agent Platform. For specific implementation questions, refer to the existing codebase and follow established patterns.
+This developer guide provides the foundation for contributing to and extending the Prompt-This Platform. For specific implementation questions, refer to the existing codebase and follow established patterns.

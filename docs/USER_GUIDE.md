@@ -28,31 +28,37 @@ Complete guide for using the Prompt Engineering Agent Platform effectively.
 #### Core Agents
 
 **Zero-Shot Agent** 🎯
+
 - **Best for**: General questions, simple tasks
 - **Example**: "Explain blockchain technology"
 - **When to use**: When you don't have examples or the task is straightforward
 
 **Few-Shot Agent** 📚
+
 - **Best for**: Classification, pattern matching, structured outputs
 - **Example**: Sentiment analysis with example classifications
 - **When to use**: When you have examples that show the desired pattern
 
 **Chain-of-Thought Agent** 🧠
+
 - **Best for**: Complex reasoning, math problems, step-by-step analysis
 - **Example**: "Calculate compound interest over 5 years"
 - **When to use**: When you need detailed reasoning steps
 
 **Self-Consistency Agent** ✅
+
 - **Best for**: Validation, multiple perspective analysis
 - **Example**: Checking the accuracy of a solution
 - **When to use**: When you want multiple reasoning paths for reliability
 
 **Tree-of-Thoughts Agent** 🌳
+
 - **Best for**: Creative problem solving, exploring multiple solutions
 - **Example**: "Generate multiple marketing strategies"
 - **When to use**: When you need to explore different approaches
 
 **ReAct Agent** 🔄
+
 - **Best for**: Planning, decision-making with actions
 - **Example**: "Plan a research project with actionable steps"
 - **When to use**: When you need reasoning combined with actionable plans
@@ -60,21 +66,25 @@ Complete guide for using the Prompt Engineering Agent Platform effectively.
 #### Advanced Agents
 
 **RAG Agent** 🔍
+
 - **Best for**: Knowledge-based queries with context
 - **Example**: "Analyze this document: [paste document]"
 - **When to use**: When you have specific context or documents to reference
 
 **Auto-Prompt Agent** ✨
+
 - **Best for**: Improving vague or poorly written prompts
 - **Example**: Input: "Write something" → Output: Optimized detailed prompt
 - **When to use**: When you're not sure how to phrase your request
 
 **Program-Aided Agent** 💻
+
 - **Best for**: Mathematical calculations, logical problems
 - **Example**: "Calculate the optimal investment portfolio"
 - **When to use**: When the problem can benefit from computational assistance
 
 **Factuality Checker Agent** 🕵️
+
 - **Best for**: Verifying claims, fact-checking content
 - **Example**: "Check if this news article contains accurate information"
 - **When to use**: When you need to validate the accuracy of statements
@@ -101,11 +111,13 @@ Complete guide for using the Prompt Engineering Agent Platform effectively.
 #### Writing Effective Prompts
 
 **✅ Good Prompts:**
+
 - Clear and specific: "Summarize the key benefits of renewable energy"
 - Include context: "For a high school audience, explain quantum computing"
 - Specify format: "List 5 pros and cons of remote work"
 
 **❌ Poor Prompts:**
+
 - Vague: "Tell me about stuff"
 - Too broad: "Explain everything about AI"
 - Ambiguous: "What should I do?"
@@ -113,13 +125,15 @@ Complete guide for using the Prompt Engineering Agent Platform effectively.
 #### Context Usage
 
 **When to Add Context:**
+
 - Providing background information
 - Specifying target audience
 - Including relevant documents or data
 - Setting specific constraints or requirements
 
 **Example:**
-```
+
+```text
 Prompt: "Create a marketing strategy"
 Context: "For a new sustainable clothing brand targeting millennials with a budget of $50k"
 ```
@@ -127,7 +141,8 @@ Context: "For a new sustainable clothing brand targeting millennials with a budg
 #### Examples for Few-Shot Learning
 
 **Structure Examples Clearly:**
-```
+
+```text
 Input: "The movie was incredible and moving"
 Output: "Positive"
 
@@ -145,6 +160,7 @@ Output: "Mixed"
 Workflows allow you to chain multiple agents together, where results from one agent can enhance the prompts for subsequent agents.
 
 **Benefits:**
+
 - **Sequential Processing**: Build on previous results
 - **Parallel Execution**: Run independent tasks simultaneously
 - **Quality Improvement**: Multiple perspectives and validation
@@ -153,8 +169,10 @@ Workflows allow you to chain multiple agents together, where results from one ag
 ### Using Pre-built Templates
 
 #### Content Analysis Pipeline
+
 **Purpose**: Comprehensive content analysis with validation
 **Steps**:
+
 1. Zero-Shot Analysis → Initial review
 2. Chain-of-Thought → Detailed analysis  
 3. Factuality Checker → Accuracy validation
@@ -162,8 +180,10 @@ Workflows allow you to chain multiple agents together, where results from one ag
 **Best for**: Analyzing articles, reports, research papers
 
 #### Problem Solving Workflow
+
 **Purpose**: Multi-approach problem solving with verification
 **Steps**:
+
 1. Tree-of-Thoughts → Explore multiple solutions
 2. Program-Aided → Code-assisted solving
 3. Self-Consistency → Solution validation
@@ -171,8 +191,10 @@ Workflows allow you to chain multiple agents together, where results from one ag
 **Best for**: Complex reasoning, mathematical problems, strategic planning
 
 #### Content Generation & Optimization
+
 **Purpose**: Create and improve content quality
 **Steps**:
+
 1. Zero-Shot → Initial content generation
 2. Auto-Prompt → Prompt optimization
 3. RAG → Knowledge enhancement
@@ -183,25 +205,29 @@ Workflows allow you to chain multiple agents together, where results from one ag
 
 #### Planning Your Workflow
 
-**1. Define Your Goal**
+##### 1. Define Your Goal
+
 - What do you want to accomplish?
 - What's the expected final output?
 - How complex is the task?
 
-**2. Break Down the Process**
+##### 2. Break Down the Process
+
 - What are the logical steps?
 - Which agents are best for each step?
 - What dependencies exist between steps?
 
-**3. Choose Agent Sequence**
+##### 3. Choose Agent Sequence
+
 - Start simple (2-3 agents)
 - Consider which provider works best for each step
 - Plan how results will flow between agents
 
 #### Workflow Design Examples
 
-**Research Analysis Workflow:**
-```
+##### Research Analysis Workflow
+
+```text
 Step 1: RAG Agent
 - Prompt: "Analyze this research paper: [content]"
 - Provider: Anthropic
@@ -217,8 +243,9 @@ Step 3: Factuality Checker
 - Provider: Anthropic
 ```
 
-**Creative Writing Workflow:**
-```
+##### Creative Writing Workflow
+
+```text
 Step 1: Tree-of-Thoughts Agent
 - Prompt: "Generate story ideas for: [theme]"
 - Provider: OpenAI
@@ -236,17 +263,20 @@ Step 3: Auto-Prompt Agent
 
 #### Execution and Monitoring
 
-**1. Create the Workflow**
+##### 1. Create the Workflow
+
 - Add all steps with proper configuration
 - Set dependencies correctly
 - Choose appropriate LLM providers
 
-**2. Execute and Monitor**
+##### 2. Execute and Monitor
+
 - Click "Execute" to start the workflow
 - Watch real-time status updates
 - Review completed steps as they finish
 
-**3. Review Results**
+##### 3. Review Results
+
 - Check the final output
 - Review intermediate results
 - Analyze the reasoning process
@@ -255,29 +285,33 @@ Step 3: Auto-Prompt Agent
 
 #### Design Principles
 
-**✅ Good Practices:**
+##### ✅ Good Practices
+
 - Start with simple workflows (2-3 steps)
 - Use descriptive step names
 - Test individual agents first
 - Consider provider strengths for each task
 - Plan for error handling
 
-**❌ Common Mistakes:**
+##### ❌ Common Mistakes
+
 - Creating overly complex workflows initially
 - Not testing agents individually first
 - Circular dependencies between steps
 - Using the same provider for all steps
 - Vague step names and prompts
 
-#### Optimization Tips
+##### Optimization Tips
 
-**Performance:**
+##### Performance
+
 - Use parallel execution when possible
 - Choose the fastest provider for each task type
 - Cache results for repeated patterns
 - Monitor token usage across providers
 
-**Quality:**
+##### Quality
+
 - Include validation steps for important workflows
 - Use different providers for different perspectives
 - Add factuality checking for critical information
@@ -287,17 +321,20 @@ Step 3: Auto-Prompt Agent
 
 ### Provider Selection Strategy
 
-**OpenAI (GPT-4O-mini):**
+#### OpenAI (GPT-4O-mini)
+
 - **Strengths**: Creative tasks, general knowledge, code generation
 - **Best for**: Content creation, brainstorming, programming help
 - **Use when**: You need creative or innovative responses
 
-**Anthropic (Claude-3-Haiku):**
+#### Anthropic (Claude-3-Haiku)
+
 - **Strengths**: Analysis, safety, structured thinking
 - **Best for**: Research analysis, fact-checking, detailed reasoning
 - **Use when**: You need careful, analytical responses
 
-**Local Provider:**
+#### Local Provider
+
 - **Strengths**: Always available, privacy, testing
 - **Best for**: Development, testing, offline scenarios
 - **Use when**: Testing workflows or API unavailable
@@ -308,7 +345,8 @@ Step 3: Auto-Prompt Agent
 When agents depend on previous steps, their prompts are automatically enhanced with results from dependent steps.
 
 **Example:**
-```
+
+```text
 Step 1 Result: "The main themes are sustainability and innovation"
 
 Step 2 Enhanced Prompt: 
@@ -321,6 +359,7 @@ Results from previous steps:
 ```
 
 **Benefits:**
+
 - Automatic context building
 - Improved response quality
 - Seamless information flow
@@ -329,12 +368,14 @@ Results from previous steps:
 ### Session Management
 
 **Sessions automatically track:**
+
 - Individual agent requests
 - Workflow executions
 - Results history
 - Performance metrics
 
 **Access Session History:**
+
 - View past requests and responses
 - Compare different agent approaches
 - Track workflow performance over time
@@ -343,12 +384,14 @@ Results from previous steps:
 ### Performance Monitoring
 
 **Real-time Monitoring:**
+
 - Workflow execution progress
 - Individual step status
 - Token usage tracking
 - Response time metrics
 
 **Analytics:**
+
 - Most used agents
 - Average response times
 - Success/failure rates
@@ -361,6 +404,7 @@ Results from previous steps:
 **Scenario**: Analyzing a research paper for accuracy and insights
 
 **Approach**:
+
 1. Use RAG Agent with the full paper as context
 2. Follow with Chain-of-Thought for detailed analysis
 3. Finish with Factuality Checker for validation
@@ -372,6 +416,7 @@ Results from previous steps:
 **Scenario**: Writing a marketing campaign for a new product
 
 **Approach**:
+
 1. Tree-of-Thoughts to explore different campaign angles
 2. Zero-Shot to develop the best concept
 3. Auto-Prompt to refine the messaging
@@ -383,6 +428,7 @@ Results from previous steps:
 **Scenario**: Optimizing a business process
 
 **Approach**:
+
 1. Chain-of-Thought to analyze current process
 2. Tree-of-Thoughts to explore alternatives
 3. Program-Aided to calculate optimization metrics
@@ -395,6 +441,7 @@ Results from previous steps:
 **Scenario**: Verifying claims in a news article
 
 **Approach**:
+
 1. RAG Agent to analyze the article with relevant context
 2. Factuality Checker to verify specific claims
 3. Chain-of-Thought to assess overall credibility
@@ -406,22 +453,26 @@ Results from previous steps:
 ### Common Issues
 
 **Agent Not Responding:**
+
 - Check if the correct LLM provider is selected
 - Verify API keys are configured (use Local provider to test)
 - Try a simpler prompt first
 
 **Workflow Stuck:**
+
 - Check for circular dependencies
 - Verify all step names are unique
 - Ensure dependent steps exist and are spelled correctly
 
 **Poor Quality Responses:**
+
 - Try different LLM providers
 - Add more context to your prompt
 - Use examples for Few-Shot agent
 - Consider breaking complex tasks into smaller steps
 
 **Performance Issues:**
+
 - Use Local provider for testing
 - Reduce prompt length and complexity
 - Consider workflow optimization

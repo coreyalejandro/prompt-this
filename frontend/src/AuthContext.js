@@ -16,7 +16,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     // Check for existing session
-    const savedUser = localStorage.getItem('promptly_user');
+    const savedUser = localStorage.getItem('prompt_this_user');
     if (savedUser) {
       const userData = JSON.parse(savedUser);
       setUser(userData);
@@ -37,7 +37,7 @@ export const AuthProvider = ({ children }) => {
     
     setUser(userData);
     setIsAuthenticated(true);
-    localStorage.setItem('promptly_user', JSON.stringify(userData));
+    localStorage.setItem('prompt_this_user', JSON.stringify(userData));
     
     return userData;
   };
@@ -45,7 +45,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setUser(null);
     setIsAuthenticated(false);
-    localStorage.removeItem('promptly_user');
+    localStorage.removeItem('prompt_this_user');
   };
 
   const value = {

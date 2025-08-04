@@ -1,6 +1,6 @@
-# 🤝 Contributing to Promptly
+# 🤝 Contributing to Prompt-This
 
-We love your input! We want to make contributing to Promptly as easy and transparent as possible, whether it's:
+We love your input! We want to make contributing to Prompt-This as easy and transparent as possible, whether it's:
 
 - Reporting a bug
 - Discussing the current state of the code
@@ -11,7 +11,7 @@ We love your input! We want to make contributing to Promptly as easy and transpa
 ## 🚀 Quick Start
 
 1. **Fork the repository**
-2. **Clone your fork**: `git clone https://github.com/yourusername/promptly.git`
+2. **Clone your fork**: `git clone https://github.com/yourusername/prompt-this.git`
 3. **Install dependencies**: Follow the setup guide in README.md
 4. **Create a branch**: `git checkout -b feature/amazing-feature`
 5. **Make your changes**: Follow our coding guidelines
@@ -31,7 +31,8 @@ We use GitHub to host code, to track issues and feature requests, as well as acc
    - `docs/description` - Documentation updates
 
 2. **Commit Messages**:
-   ```
+
+   ```text
    type(scope): description
    
    feat(agents): add new factuality checker agent
@@ -49,16 +50,18 @@ We use GitHub to host code, to track issues and feature requests, as well as acc
 ## 🛠️ Development Setup
 
 ### Prerequisites
+
 - Python 3.11+
 - Node.js 18+
 - MongoDB 5.0+
 - Git
 
 ### Local Setup
+
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/promptly.git
-cd promptly
+git clone https://github.com/yourusername/prompt-this.git
+cd prompt-this
 
 # Backend setup
 cd backend
@@ -88,6 +91,7 @@ yarn start
 ### Running Tests
 
 **Backend Tests:**
+
 ```bash
 cd backend
 pytest                          # Run all tests
@@ -97,6 +101,7 @@ pytest -v                       # Verbose output
 ```
 
 **Frontend Tests:**
+
 ```bash
 cd frontend
 yarn test                       # Run all tests
@@ -105,6 +110,7 @@ yarn test --watch               # Run in watch mode
 ```
 
 ### Test Requirements
+
 - All new features must include tests
 - Maintain >90% code coverage for backend
 - Maintain >80% component coverage for frontend
@@ -113,6 +119,7 @@ yarn test --watch               # Run in watch mode
 ### Writing Tests
 
 **Backend Test Example:**
+
 ```python
 import pytest
 from server import ZeroShotAgent, PromptRequest, LLMProvider
@@ -130,6 +137,7 @@ async def test_zero_shot_agent():
 ```
 
 **Frontend Test Example:**
+
 ```javascript
 import { render, screen } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
@@ -142,7 +150,7 @@ test('renders app header', () => {
     </BrowserRouter>
   );
   
-  const header = screen.getByText(/Promptly/i);
+  const header = screen.getByText(/Prompt-This/i);
   expect(header).toBeInTheDocument();
 });
 ```
@@ -150,6 +158,7 @@ test('renders app header', () => {
 ## 📝 Coding Standards
 
 ### Python (Backend)
+
 - Follow PEP 8
 - Use type hints
 - Document functions with docstrings
@@ -181,6 +190,7 @@ async def process_agent_request(
 ```
 
 ### JavaScript (Frontend)
+
 - Use functional components with hooks
 - Follow ESLint configuration
 - Use descriptive variable names
@@ -211,13 +221,15 @@ const fetchAgentData = useCallback(async (agentType, options = {}) => {
 ### Adding a New Agent
 
 1. **Define Agent Type** in `server.py`:
+
 ```python
 class AgentType(str, Enum):
     # ... existing agents
     NEW_AGENT = "new_agent"
 ```
 
-2. **Create Agent Class**:
+1. **Create Agent Class**:
+
 ```python
 class NewAgent(BaseAgent):
     def __init__(self):
@@ -228,9 +240,9 @@ class NewAgent(BaseAgent):
         pass
 ```
 
-3. **Register Agent** in `initialize_agents()`
-4. **Add Tests** for the new agent
-5. **Update Documentation**
+1. **Register Agent** in `initialize_agents()`
+2. **Add Tests** for the new agent
+3. **Update Documentation**
 
 ### Adding a New LLM Provider
 
@@ -251,12 +263,14 @@ class NewAgent(BaseAgent):
 ## 📚 Documentation
 
 ### What to Document
+
 - All new features and APIs
 - Breaking changes
 - Setup and configuration changes
 - Examples and use cases
 
 ### Documentation Files to Update
+
 - `README.md` - Main project documentation
 - `docs/API_DOCUMENTATION.md` - API reference
 - `docs/USER_GUIDE.md` - User manual
@@ -264,6 +278,7 @@ class NewAgent(BaseAgent):
 - `CHANGELOG.md` - Version history
 
 ### Documentation Standards
+
 - Use clear, concise language
 - Include examples where helpful
 - Keep documentation up-to-date with code changes
@@ -281,6 +296,7 @@ Use the bug report template and include:
 - Screenshots (if helpful)
 
 ### Bug Report Checklist
+
 - [ ] Check if issue already exists
 - [ ] Use the bug report template
 - [ ] Include reproduction steps
@@ -297,6 +313,7 @@ Use the feature request template and include:
 - Implementation considerations
 
 ### Feature Request Guidelines
+
 - [ ] Check if feature already requested
 - [ ] Use the feature request template
 - [ ] Explain the use case clearly
@@ -306,12 +323,14 @@ Use the feature request template and include:
 ## 🔒 Security
 
 ### Reporting Security Issues
+
 - **DO NOT** open a public issue for security vulnerabilities
-- Email security concerns to: [security@promptly.ai]
+- Email security concerns to: [security@prompt-this.ai]
 - Include detailed description and reproduction steps
 - Allow reasonable time for response before disclosure
 
 ### Security Best Practices
+
 - Never commit API keys or secrets
 - Validate all user inputs
 - Use environment variables for configuration
@@ -320,9 +339,11 @@ Use the feature request template and include:
 ## 📜 Code of Conduct
 
 ### Our Pledge
+
 We pledge to make participation in our project a harassment-free experience for everyone, regardless of age, body size, disability, ethnicity, gender identity and expression, level of experience, nationality, personal appearance, race, religion, or sexual identity and orientation.
 
 ### Our Standards
+
 - Use welcoming and inclusive language
 - Be respectful of differing viewpoints and experiences
 - Gracefully accept constructive criticism
@@ -330,11 +351,13 @@ We pledge to make participation in our project a harassment-free experience for 
 - Show empathy towards other community members
 
 ### Enforcement
+
 Instances of abusive, harassing, or otherwise unacceptable behavior may be reported by contacting the project team. All complaints will be reviewed and investigated promptly and fairly.
 
 ## 🏷️ Labels and Tags
 
 ### Issue Labels
+
 - `bug` - Something isn't working
 - `enhancement` - New feature or request
 - `documentation` - Improvements or additions to docs
@@ -344,6 +367,7 @@ Instances of abusive, harassing, or otherwise unacceptable behavior may be repor
 - `priority: low` - Low priority issue
 
 ### Component Labels
+
 - `backend` - Backend/API related
 - `frontend` - Frontend/UI related
 - `agents` - Agent-specific issues
@@ -353,6 +377,7 @@ Instances of abusive, harassing, or otherwise unacceptable behavior may be repor
 ## 🎉 Recognition
 
 Contributors will be recognized in:
+
 - CHANGELOG.md for significant contributions
 - README.md contributors section
 - Release notes for major features
@@ -360,11 +385,13 @@ Contributors will be recognized in:
 ## 📞 Getting Help
 
 ### Development Questions
+
 - Create a discussion in GitHub Discussions
 - Join our community chat [if available]
 - Check existing issues and documentation
 
 ### Stuck on Something?
+
 1. Check the documentation first
 2. Search existing issues
 3. Create a new issue with the question label
@@ -372,7 +399,8 @@ Contributors will be recognized in:
 
 ## 📈 Project Roadmap
 
-Check our [GitHub Projects](https://github.com/yourusername/promptly/projects) for:
+Check our [GitHub Projects](https://github.com/yourusername/prompt-this/projects) for:
+
 - Current sprint goals
 - Feature roadmap
 - Known issues
@@ -380,6 +408,6 @@ Check our [GitHub Projects](https://github.com/yourusername/promptly/projects) f
 
 ---
 
-Thank you for contributing to Promptly! 🚀
+Thank you for contributing to Prompt-This! 🚀
 
-Every contribution, no matter how small, helps make Promptly better for everyone.
+Every contribution, no matter how small, helps make Prompt-This better for everyone.

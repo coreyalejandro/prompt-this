@@ -442,7 +442,7 @@ const AppContent = () => {
           <div className="container mx-auto px-4 py-4">
             <div className="flex justify-between items-center">
               <Link to="/" className="text-xl font-bold text-gray-800 dark:text-gray-100">
-                Promptly - Prompt Engineering Agent Platform
+                Prompt-This - Prompt Engineering Agent Platform
               </Link>
               <nav className="flex items-center space-x-6">
                 <Link to="/" className="text-gray-600 hover:text-gray-800">
@@ -486,7 +486,7 @@ const AppContent = () => {
         {/* Footer */}
         <footer className="bg-white border-t mt-12">
           <div className="container mx-auto px-4 py-6 text-center text-gray-600">
-            <p>Built with FastAPI + React | Promptly - Prompt Engineering Done Right</p>
+            <p>Built with FastAPI + React | Prompt-This - Prompt Engineering Done Right</p>
             <div className="mt-2 text-sm space-x-4">
               <a href="/docs/README.md" className="text-blue-500 hover:text-blue-700">Documentation</a>
               <a href="/docs/API_DOCUMENTATION.md" className="text-blue-500 hover:text-blue-700">API Docs</a>

@@ -1,6 +1,6 @@
 ---
 name: Feature request
-about: Suggest an idea for Promptly
+about: Suggest an idea for Prompt-This
 title: '[FEATURE] '
 labels: enhancement
 assignees: ''

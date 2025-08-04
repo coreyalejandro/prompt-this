@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Create a report to help us improve Promptly
+about: Create a report to help us improve Prompt-This
 title: '[BUG] '
 labels: bug
 assignees: ''
@@ -25,7 +25,7 @@ If applicable, add screenshots to help explain your problem.
 **Environment (please complete the following information):**
 - OS: [e.g. Ubuntu 20.04, macOS 12.0, Windows 11]
 - Browser [e.g. Chrome 91, Firefox 89]
-- Promptly Version [e.g. 1.0.0]
+- Prompt-This Version [e.g. 1.0.0]
 - Python Version [e.g. 3.11.0]
 - Node.js Version [e.g. 18.0.0]
 

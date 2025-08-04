@@ -2,7 +2,7 @@
 
 ## 🎓 About This Project
 
-**Promptly** is an independent, open-source implementation inspired by prompt engineering concepts. This project was created as:
+**Prompt-This** is an independent, open-source implementation inspired by prompt engineering concepts. This project was created as:
 
 - **Educational Purpose**: To make prompt engineering techniques more accessible to developers and researchers
 - **Community Contribution**: A way to give back to the AI community by providing practical tools
@@ -16,7 +16,7 @@ This project draws inspiration from the **Prompt Engineering Guide** and related
 
 **⚠️ IMPORTANT DISCLAIMERS:**
 
-1. **No Affiliation**: The creator of Promptly is **NOT affiliated** with D.A.I.R. AI or any of its members
+1. **No Affiliation**: The creator of Prompt-This is **NOT affiliated** with D.A.I.R. AI or any of its members
 2. **Independent Implementation**: This is an entirely independent project, not endorsed by or connected to D.A.I.R. AI
 3. **No Claims**: The creator makes **NO CLAIMS** to the original Prompt Engineering Guide content
 4. **Educational Use**: This implementation is for educational and research purposes
@@ -30,7 +30,7 @@ The original **Prompt Engineering Guide** by D.A.I.R. AI represents groundbreaki
 
 ## 📚 Original Sources
 
-The theoretical foundations implemented in Promptly are based on:
+The theoretical foundations implemented in Prompt-This are based on:
 
 - **D.A.I.R. AI Prompt Engineering Guide**: [https://github.com/dair-ai/Prompt-Engineering-Guide](https://github.com/dair-ai/Prompt-Engineering-Guide)
 - **Academic Research**: Various papers and studies in prompt engineering and AI reasoning
@@ -40,14 +40,16 @@ The theoretical foundations implemented in Promptly are based on:
 
 ## 🤝 Relationship with Original Work
 
-### What This Project IS:
+### What This Project IS
+
 - ✅ An independent software implementation
 - ✅ A learning exercise in practical AI application
 - ✅ A community contribution to accessibility
 - ✅ Open-source software under MIT License
 - ✅ Educational and research-focused
 
-### What This Project IS NOT:
+### What This Project IS NOT
+
 - ❌ An official D.A.I.R. AI project
 - ❌ Endorsed by or affiliated with D.A.I.R. AI
 - ❌ A commercial exploitation of original research
@@ -67,6 +69,7 @@ This implementation aims to:
 ## 🔧 Technical Independence
 
 ### Original Development
+
 - **Codebase**: 100% original implementation
 - **Architecture**: Independent design decisions
 - **Features**: Original interpretations of concepts
@@ -74,7 +77,9 @@ This implementation aims to:
 - **Infrastructure**: Self-contained technical stack
 
 ### Inspired Concepts
+
 While the code is original, the **concepts** implemented are based on:
+
 - Zero-shot prompting techniques
 - Few-shot learning approaches
 - Chain-of-thought reasoning

@@ -1,11 +1,11 @@
 #!/bin/bash
 
-echo "🤖 Starting Promptly..."
+echo "🤖 Starting Prompt-This..."
 
 # Function to kill background processes on exit
 cleanup() {
     echo ""
-    echo "🛑 Stopping Promptly..."
+    echo "🛑 Stopping Prompt-This..."
     kill $BACKEND_PID $FRONTEND_PID 2>/dev/null
     exit 0
 }
@@ -32,7 +32,7 @@ FRONTEND_PID=$!
 cd ..
 
 echo ""
-echo "✅ Promptly is starting up!"
+echo "✅ Prompt-This is starting up!"
 echo "🌐 Frontend: http://localhost:3000"
 echo "📡 Backend API: http://localhost:8001"
 echo "📖 API Docs: http://localhost:8001/docs"
