@@ -8,6 +8,7 @@ import WorkflowDesigner from "./WorkflowDesigner";
 import OnboardingTutorial from "./OnboardingTutorial";
 import { AuthProvider, useAuth } from "./AuthContext";
 import LoginModal from "./LoginModal";
+import Forum from "./Forum";
 import Profile from "./Profile";
 import { useTranslation } from "react-i18next";
 
@@ -463,6 +464,9 @@ const AppContent = () => {
                 <Link to="/guidebook" className="text-gray-600 hover:text-gray-800">
                   Guidebook
                 </Link>
+                <Link to="/forum" className="text-gray-600 hover:text-gray-800">
+                  Forum
+                </Link>
                 <button
                   onClick={handleTutorialClick}
                   className="text-gray-600 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
@@ -500,7 +504,8 @@ import { useTranslation } from "react-i18next";
         <Routes>
           <Route path="/" element={<AgentLibrary />} />
           <Route path="/workflows" element={<WorkflowDesigner />} />
-          <Route path="/guidebook" element={<Guidebook />} />
+<Route path="/forum" element={<Forum />} />
+<Route path="/guidebook" element={<Guidebook />} />
           <Route path="/agent/:agentType" element={<AgentTesterWrapper />} />
           <Route path="/agent/:agentType/info" element={<AgentInfoWrapper />} />
 <Route path="/profile" element={<Profile />} />

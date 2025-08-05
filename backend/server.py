@@ -1180,25 +1180,45 @@ async def get_workflow_templates():
     
     return {"templates": templates}
 
-# Guidebook routes
-@app.get("/guidebook")
-async def list_guidebook_chapters():
-    if not GUIDEBOOK_DIR.exists():
-        raise HTTPException(status_code=404, detail="Guidebook not found")
-    chapters = [f.name for f in GUIDEBOOK_DIR.glob("*.md")]
-    chapters += [f.name for f in GUIDEBOOK_DIR.glob("*.html")]
-    return {"chapters": sorted(chapters)}
+# Forum integration
+try:
+    from flask import Flask
+    from flask_discuss import Discuss
+    from starlette.middleware.wsgi import WSGIMiddleware
 
+    flask_forum = Flask(__name__)
+    Discuss(flask_forum)
+    app.mount("/forum", WSGIMiddleware(flask_forum))
+except Exception:  # pragma: no cover - fallback when package missing
+    from fastapi import APIRouter
+    from pydantic import BaseModel, Field
+    from typing import List
+    import uuid
+    from datetime import datetime
 
-@app.get("/guidebook/{chapter_name}")
-async def get_guidebook_chapter(chapter_name: str):
-    file_path = GUIDEBOOK_DIR / chapter_name
-    if not file_path.exists() or not file_path.is_file():
-        raise HTTPException(status_code=404, detail="Chapter not found")
-    content = file_path.read_text(encoding="utf-8")
-    if file_path.suffix == ".html":
-        return HTMLResponse(content)
-    return PlainTextResponse(content, media_type="text/markdown")
+    forum_router = APIRouter(prefix="/forum")
+
+    class ForumThread(BaseModel):
+        id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+        title: str
+        content: str
+        created_at: datetime = Field(default_factory=datetime.utcnow)
+
+    class ThreadCreate(BaseModel):
+        title: str
+        content: str
+
+    forum_threads: List[ForumThread] = []
+
+    @forum_router.get("/threads", response_model=List[ForumThread])
+    async def list_threads() -> List[ForumThread]:
+        return forum_threads
+
+    @forum_router.post("/threads", response_model=ForumThread)
+    async def create_thread(thread: ThreadCreate) -> ForumThread:
+        new_thread = ForumThread(title=thread.title, content=thread.content)
+        forum_threads.append(new_thread)
+        return new_thread
 
 # Include router
 app.include_router(api_router)
