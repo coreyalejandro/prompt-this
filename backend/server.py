@@ -222,9 +222,14 @@ class WorkflowResponse(BaseModel):
     created_at: datetime = Field(default_factory=datetime.utcnow)
     completed_at: Optional[datetime] = None
 
-from datetime import datetime
 from pydantic import BaseModel, Field
-from typing import Optional, List
+from typing import List, Optional
+from datetime import datetime
+
+class UserProgress(BaseModel):
+    user_id: str
+    completed_exercises: List[str] = []
+    completed_tutorials: List[str] = []
 
 class Achievement(BaseModel):
     name: str
@@ -982,7 +987,41 @@ async def get_session_history(session_id: str):
     responses = [serialize_doc(response) for response in responses]
     return {"session_id": session_id, "responses": responses}
 
+# User Progress Endpoints
+@api_router.post("/user-progress", response_model=UserProgress)
+async def create_user_progress(progress: UserProgress):
+    existing = await db.user_progress.find_one({"user_id": progress.user_id})
+    if existing:
+        raise HTTPException(status_code=400, detail="Progress already exists")
+    await db.user_progress.insert_one(progress.dict())
+    return progress
 
+@api_router.get("/user-progress/{user_id}", response_model=UserProgress)
+async def get_user_progress(user_id: str):
+    progress = await db.user_progress.find_one({"user_id": user_id})
+    if not progress:
+        raise HTTPException(status_code=404, detail="User progress not found")
+    return UserProgress(**progress)
+
+@api_router.put("/user-progress/{user_id}", response_model=UserProgress)
+async def update_user_progress(user_id: str, progress: UserProgress):
+    updated = await db.user_progress.find_one_and_update(
+        {"user_id": user_id},
+        {"$set": progress.dict()},
+        return_document=True,
+    )
+    if not updated:
+        raise HTTPException(status_code=404, detail="User progress not found")
+    return UserProgress(**updated)
+
+@api_router.delete("/user-progress/{user_id}")
+async def delete_user_progress(user_id: str):
+    result = await db.user_progress.delete_one({"user_id": user_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="User progress not found")
+    return {"status": "deleted"}
+
+# Fetch user profile (Points and Achievements)
 @api_router.get("/users/{user_id}/profile")
 async def get_user_profile(user_id: str):
     """Get user points and achievements"""
@@ -991,7 +1030,7 @@ async def get_user_profile(user_id: str):
     return {
         "user_id": user_id,
         "points": points_doc.get("points", 0),
-        "achievements": achievements_doc.get("achievements", []),
+        "achievements": achievements_doc.get("achievements", [])
     }
 
 # Workflow API Endpoints

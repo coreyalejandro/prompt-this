@@ -8,6 +8,7 @@ import WorkflowDesigner from "./WorkflowDesigner";
 import OnboardingTutorial from "./OnboardingTutorial";
 import { AuthProvider, useAuth } from "./AuthContext";
 import LoginModal from "./LoginModal";
+import ProgressDashboard from "./ProgressDashboard";
 import Forum from "./Forum";
 import Profile from "./Profile";
 import { useTranslation } from "react-i18next";
@@ -75,6 +76,7 @@ const AgentLibrary = () => {
 
 // Agent Testing Component
 const AgentTester = ({ agentType }) => {
+  const { completeExercise } = useAuth();
   const [agent, setAgent] = useState(null);
   const [prompt, setPrompt] = useState("");
   const [context, setContext] = useState("");
@@ -130,6 +132,9 @@ const AgentTester = ({ agentType }) => {
 
       const result = await axios.post(`${API}/agents/process`, requestData);
       setResponse(result.data);
+      if (result.data.status === "completed") {
+        completeExercise(agentType);
+      }
     } catch (error) {
       console.error("Error processing request:", error);
       setResponse({
@@ -415,8 +420,8 @@ const AgentInfo = ({ agentType }) => {
 const AppContent = () => {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
-  const { user, isAuthenticated, logout } = useAuth();
-  const { t, i18n } = useTranslation();
+const { user, isAuthenticated, logout, completeTutorial } = useAuth();
+const { t, i18n } = useTranslation();
 
   useEffect(() => {
     // Check if user has completed onboarding
@@ -434,6 +439,7 @@ const AppContent = () => {
 
   const handleOnboardingComplete = () => {
     setShowOnboarding(false);
+    completeTutorial('onboarding');
   };
 
   const handleTutorialClick = () => {
@@ -466,6 +472,9 @@ const AppContent = () => {
                 </Link>
                 <Link to="/forum" className="text-gray-600 hover:text-gray-800">
                   Forum
+                </Link>
+                <Link to="/progress" className="text-gray-600 hover:text-gray-800">
+                  Progress
                 </Link>
                 <button
                   onClick={handleTutorialClick}
@@ -508,6 +517,7 @@ import { useTranslation } from "react-i18next";
 <Route path="/guidebook" element={<Guidebook />} />
           <Route path="/agent/:agentType" element={<AgentTesterWrapper />} />
           <Route path="/agent/:agentType/info" element={<AgentInfoWrapper />} />
+<Route path="/progress" element={<ProgressDashboard />} />
 <Route path="/profile" element={<Profile />} />
 <Route path="/exercises/:chapter" element={<ExercisesWrapper />} />
         </Routes>
