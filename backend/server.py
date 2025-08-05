@@ -1,5 +1,5 @@
-from fastapi import FastAPI, APIRouter, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from dotenv import load_dotenv
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
@@ -8,7 +8,7 @@ from pathlib import Path
 from pydantic import BaseModel, Field
 from typing import List, Dict, Any, Optional, Literal
 import uuid
-from datetime import datetime
+from datetime import datetime, timedelta
 from enum import Enum
 import asyncio
 import json
@@ -20,6 +20,7 @@ sys.path.append(str(Path(__file__).parent))
 
 from llm_providers import LLMProviderManager, llm_manager
 from workflow_engine import WorkflowEngine, get_workflow_engine, Workflow, WorkflowStep
+from i18n import translate
 
 # Custom JSON encoder for MongoDB ObjectId
 from bson import ObjectId
@@ -42,16 +43,85 @@ def serialize_doc(doc):
 
 # Load environment variables
 ROOT_DIR = Path(__file__).parent
+GUIDEBOOK_DIR = ROOT_DIR.parent / 'docs' / 'guidebook'
 load_dotenv(ROOT_DIR / '.env')
 
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
+exercises_collection = db["exercises"]
 
 # Create the main app
 app = FastAPI(title="Prompt-This API", version="1.0.0")
 api_router = APIRouter(prefix="/api")
+
+# Authentication setup
+SECRET_KEY = os.environ.get("SECRET_KEY", "change-me")
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/token")
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+    user: Dict[str, Any]
+
+
+class User(BaseModel):
+    username: str
+
+
+class UserCreate(User):
+    password: str
+
+
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    return pwd_context.verify(plain_password, hashed_password)
+
+
+def get_password_hash(password: str) -> str:
+    return pwd_context.hash(password)
+
+
+async def get_user(username: str) -> Optional[Dict[str, Any]]:
+    return await db.users.find_one({"username": username})
+
+
+async def authenticate_user(username: str, password: str) -> Optional[Dict[str, Any]]:
+    user = await get_user(username)
+    if not user or not verify_password(password, user.get("hashed_password", "")):
+        return None
+    return user
+
+
+def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
+    to_encode = data.copy()
+    expire = datetime.utcnow() + (expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
+    to_encode.update({"exp": expire})
+    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+
+
+async def get_current_user(token: str = Depends(oauth2_scheme)) -> Dict[str, Any]:
+    credentials_exception = HTTPException(
+        status_code=401,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username: Optional[str] = payload.get("sub")
+        if username is None:
+            raise credentials_exception
+    except JWTError:
+        raise credentials_exception
+    user = await get_user(username)
+    if user is None:
+        raise credentials_exception
+    return user
 
 # CORS middleware
 app.add_middleware(
@@ -68,6 +138,22 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
+
+# Rate limiting for LLM calls
+LLM_REQUESTS_PER_SECOND = int(os.getenv("LLM_REQUESTS_PER_SECOND", 5))
+LLM_QUEUE_TIMEOUT = float(os.getenv("LLM_QUEUE_TIMEOUT", 1))
+llm_rate_limiter = AsyncLimiter(LLM_REQUESTS_PER_SECOND, 1)
+
+async def rate_limited_llm_call(**kwargs):
+    """Call the LLM with rate limiting and queue control."""
+    try:
+        await asyncio.wait_for(llm_rate_limiter.acquire(), timeout=LLM_QUEUE_TIMEOUT)
+    except asyncio.TimeoutError:
+        raise HTTPException(status_code=503, detail="Server is busy. Please try again later.")
+    try:
+        return await llm_manager.generate_response(**kwargs)
+    finally:
+        llm_rate_limiter.release()
 
 # Enums and Models
 class AgentType(str, Enum):
@@ -136,6 +222,9 @@ class WorkflowResponse(BaseModel):
     created_at: datetime = Field(default_factory=datetime.utcnow)
     completed_at: Optional[datetime] = None
 
+from datetime import datetime
+from pydantic import BaseModel, Field
+from typing import Optional, List
 
 class Achievement(BaseModel):
     name: str
@@ -143,15 +232,19 @@ class Achievement(BaseModel):
     description: Optional[str] = None
     awarded_at: datetime = Field(default_factory=datetime.utcnow)
 
-
 class UserAchievements(BaseModel):
     user_id: str
     achievements: List[Achievement] = Field(default_factory=list)
 
-
 class UserPoints(BaseModel):
     user_id: str
     points: int = 0
+
+# New Exercise model
+class Exercise(BaseModel):
+    chapter: str
+    question: str
+    solution: str
 
 # Agent Registry
 AGENT_REGISTRY = {}
@@ -236,16 +329,18 @@ class BaseAgent:
         try:
             # Simulate processing - will be replaced with actual LLM calls
             await asyncio.sleep(0.1)  # Simulate async processing
-            
+
             # Call the specific agent's processing method
             result = await self._process_request(request, llm_provider)
-            
+
             response.status = AgentStatus.COMPLETED
             response.result = result.get("result", "")
             response.reasoning = result.get("reasoning", [])
             response.metadata = result.get("metadata", {})
             response.completed_at = datetime.utcnow()
-            
+
+        except HTTPException:
+            raise
         except Exception as e:
             response.status = AgentStatus.FAILED
             response.error = str(e)
@@ -273,7 +368,7 @@ Please provide a direct and accurate response to the task above."""
         
         try:
             # Use actual LLM call
-            llm_response = await llm_manager.generate_response(
+            llm_response = await rate_limited_llm_call(
                 provider_type=llm_provider,
                 prompt=enhanced_prompt,
                 max_tokens=1000,
@@ -323,7 +418,7 @@ Now, please provide a response following the pattern shown in the examples above
         
         try:
             # Use actual LLM call
-            llm_response = await llm_manager.generate_response(
+            llm_response = await rate_limited_llm_call(
                 provider_type=llm_provider,
                 prompt=enhanced_prompt,
                 max_tokens=1000,
@@ -370,7 +465,7 @@ Let's work through this step by step:"""
         
         try:
             # Use actual LLM call
-            llm_response = await llm_manager.generate_response(
+            llm_response = await rate_limited_llm_call(
                 provider_type=llm_provider,
                 prompt=enhanced_prompt,
                 max_tokens=1000,
@@ -486,7 +581,7 @@ Let's start:"""
         
         try:
             # Use actual LLM call
-            llm_response = await llm_manager.generate_response(
+            llm_response = await rate_limited_llm_call(
                 provider_type=llm_provider,
                 prompt=enhanced_prompt,
                 max_tokens=1000,
@@ -554,7 +649,7 @@ Based on the available context and my knowledge base:"""
         
         try:
             # Use actual LLM call
-            llm_response = await llm_manager.generate_response(
+            llm_response = await rate_limited_llm_call(
                 provider_type=llm_provider,
                 prompt=enhanced_prompt,
                 max_tokens=1200,
@@ -608,7 +703,7 @@ Optimized Prompt:"""
         
         try:
             # First, optimize the prompt
-            optimization_response = await llm_manager.generate_response(
+            optimization_response = await rate_limited_llm_call(
                 provider_type=llm_provider,
                 prompt=optimization_prompt,
                 max_tokens=800,
@@ -618,7 +713,7 @@ Optimized Prompt:"""
             optimized_prompt = optimization_response["response"]
             
             # Then use the optimized prompt
-            final_response = await llm_manager.generate_response(
+            final_response = await rate_limited_llm_call(
                 provider_type=llm_provider,
                 prompt=optimized_prompt,
                 max_tokens=1000,
@@ -676,7 +771,7 @@ Let me work through this systematically with code assistance:
         
         try:
             # Use actual LLM call
-            llm_response = await llm_manager.generate_response(
+            llm_response = await rate_limited_llm_call(
                 provider_type=llm_provider,
                 prompt=enhanced_prompt,
                 max_tokens=1200,
@@ -733,7 +828,7 @@ Factuality Analysis:"""
         
         try:
             # Use actual LLM call
-            llm_response = await llm_manager.generate_response(
+            llm_response = await rate_limited_llm_call(
                 provider_type=llm_provider,
                 prompt=enhanced_prompt,
                 max_tokens=1200,
@@ -792,9 +887,46 @@ def initialize_agents():
 WORKFLOW_ENGINE = None
 
 # API Routes
+
+
+@api_router.post("/signup", response_model=Token)
+async def signup(user: UserCreate):
+    existing = await get_user(user.username)
+    if existing:
+        raise HTTPException(status_code=400, detail="Username already registered")
+    hashed_password = get_password_hash(user.password)
+    await db.users.insert_one({"username": user.username, "hashed_password": hashed_password})
+    access_token = create_access_token({"sub": user.username})
+    return {"access_token": access_token, "token_type": "bearer", "user": {"username": user.username}}
+
+
+@api_router.post("/token", response_model=Token)
+async def login(form_data: OAuth2PasswordRequestForm = Depends()):
+    user = await authenticate_user(form_data.username, form_data.password)
+    if not user:
+        raise HTTPException(status_code=401, detail="Incorrect username or password")
+    access_token = create_access_token({"sub": user["username"]})
+    return {"access_token": access_token, "token_type": "bearer", "user": {"username": user["username"]}}
+
+
+@api_router.get("/progress")
+async def get_progress(current_user: Dict[str, Any] = Depends(get_current_user)):
+    return {"user": current_user["username"], "progress": []}
+
+
+@api_router.get("/exercises")
+async def get_exercises(current_user: Dict[str, Any] = Depends(get_current_user)):
+    return {"user": current_user["username"], "exercises": []}
 @api_router.get("/")
 async def root():
     return {"message": "Prompt-This API", "version": "1.0.0"}
+
+@api_router.get("/exercises/{chapter}")
+async def get_exercises(chapter: str):
+    """Fetch exercises for a specific chapter"""
+    docs = await exercises_collection.find({"chapter": chapter}).to_list(100)
+    docs = [serialize_doc(doc) for doc in docs]
+    return {"exercises": docs}
 
 @api_router.get("/agents")
 async def get_agents():
@@ -884,7 +1016,7 @@ async def create_workflow(request: Dict[str, Any]):
     return workflow.dict()
 
 @api_router.post("/workflows/{workflow_id}/execute")
-async def execute_workflow(workflow_id: str, background_tasks: BackgroundTasks):
+async def execute_workflow(workflow_id: str, background_tasks: BackgroundTasks, lang: str = "en"):
     """Execute a workflow"""
     global WORKFLOW_ENGINE
     if not WORKFLOW_ENGINE:
@@ -893,7 +1025,10 @@ async def execute_workflow(workflow_id: str, background_tasks: BackgroundTasks):
     # Execute workflow in background
     background_tasks.add_task(execute_workflow_task, workflow_id)
     
-    return {"message": f"Workflow {workflow_id} execution started", "workflow_id": workflow_id}
+    return {
+        "message": translate(lang, "workflow_started", workflow_id=workflow_id),
+        "workflow_id": workflow_id,
+    }
 
 async def execute_workflow_task(workflow_id: str):
     """Background task to execute workflow"""
@@ -908,7 +1043,7 @@ async def execute_workflow_task(workflow_id: str):
         logger.error(f"Workflow {workflow_id} failed: {str(e)}")
 
 @api_router.get("/workflows/{workflow_id}")
-async def get_workflow(workflow_id: str):
+async def get_workflow(workflow_id: str, lang: str = "en"):
     """Get workflow details"""
     global WORKFLOW_ENGINE
     if not WORKFLOW_ENGINE:
@@ -919,7 +1054,7 @@ async def get_workflow(workflow_id: str):
         # Try to get from database
         workflow_data = await db.workflows.find_one({"id": workflow_id})
         if not workflow_data:
-            raise HTTPException(status_code=404, detail="Workflow not found")
+            raise HTTPException(status_code=404, detail=translate(lang, "workflow_not_found"))
         return serialize_doc(workflow_data)
     
     return workflow.dict()
@@ -943,7 +1078,7 @@ async def list_workflows(active_only: bool = False):
     return {"workflows": workflows_data}
 
 @api_router.delete("/workflows/{workflow_id}")
-async def cancel_workflow(workflow_id: str):
+async def cancel_workflow(workflow_id: str, lang: str = "en"):
     """Cancel an active workflow"""
     global WORKFLOW_ENGINE
     if not WORKFLOW_ENGINE:
@@ -951,9 +1086,9 @@ async def cancel_workflow(workflow_id: str):
     
     success = await WORKFLOW_ENGINE.cancel_workflow(workflow_id)
     if not success:
-        raise HTTPException(status_code=404, detail="Workflow not found or not active")
-    
-    return {"message": f"Workflow {workflow_id} cancelled"}
+        raise HTTPException(status_code=404, detail=translate(lang, "workflow_not_active"))
+
+    return {"message": translate(lang, "workflow_cancelled", workflow_id=workflow_id)}
 
 # Workflow Templates
 @api_router.get("/workflow-templates")
@@ -1044,6 +1179,26 @@ async def get_workflow_templates():
     ]
     
     return {"templates": templates}
+
+# Guidebook routes
+@app.get("/guidebook")
+async def list_guidebook_chapters():
+    if not GUIDEBOOK_DIR.exists():
+        raise HTTPException(status_code=404, detail="Guidebook not found")
+    chapters = [f.name for f in GUIDEBOOK_DIR.glob("*.md")]
+    chapters += [f.name for f in GUIDEBOOK_DIR.glob("*.html")]
+    return {"chapters": sorted(chapters)}
+
+
+@app.get("/guidebook/{chapter_name}")
+async def get_guidebook_chapter(chapter_name: str):
+    file_path = GUIDEBOOK_DIR / chapter_name
+    if not file_path.exists() or not file_path.is_file():
+        raise HTTPException(status_code=404, detail="Chapter not found")
+    content = file_path.read_text(encoding="utf-8")
+    if file_path.suffix == ".html":
+        return HTMLResponse(content)
+    return PlainTextResponse(content, media_type="text/markdown")
 
 # Include router
 app.include_router(api_router)
