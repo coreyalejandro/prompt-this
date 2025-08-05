@@ -15,6 +15,7 @@ import asyncio
 import json
 import sys
 from pathlib import Path
+from aiolimiter import AsyncLimiter
 
 # Add the backend directory to Python path
 sys.path.append(str(Path(__file__).parent))
@@ -72,6 +73,22 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
+
+# Rate limiting for LLM calls
+LLM_REQUESTS_PER_SECOND = int(os.getenv("LLM_REQUESTS_PER_SECOND", 5))
+LLM_QUEUE_TIMEOUT = float(os.getenv("LLM_QUEUE_TIMEOUT", 1))
+llm_rate_limiter = AsyncLimiter(LLM_REQUESTS_PER_SECOND, 1)
+
+async def rate_limited_llm_call(**kwargs):
+    """Call the LLM with rate limiting and queue control."""
+    try:
+        await asyncio.wait_for(llm_rate_limiter.acquire(), timeout=LLM_QUEUE_TIMEOUT)
+    except asyncio.TimeoutError:
+        raise HTTPException(status_code=503, detail="Server is busy. Please try again later.")
+    try:
+        return await llm_manager.generate_response(**kwargs)
+    finally:
+        llm_rate_limiter.release()
 
 # Enums and Models
 class AgentType(str, Enum):
@@ -179,16 +196,18 @@ class BaseAgent:
         try:
             # Simulate processing - will be replaced with actual LLM calls
             await asyncio.sleep(0.1)  # Simulate async processing
-            
+
             # Call the specific agent's processing method
             result = await self._process_request(request, llm_provider)
-            
+
             response.status = AgentStatus.COMPLETED
             response.result = result.get("result", "")
             response.reasoning = result.get("reasoning", [])
             response.metadata = result.get("metadata", {})
             response.completed_at = datetime.utcnow()
-            
+
+        except HTTPException:
+            raise
         except Exception as e:
             response.status = AgentStatus.FAILED
             response.error = str(e)
@@ -216,7 +235,7 @@ Please provide a direct and accurate response to the task above."""
         
         try:
             # Use actual LLM call
-            llm_response = await llm_manager.generate_response(
+            llm_response = await rate_limited_llm_call(
                 provider_type=llm_provider,
                 prompt=enhanced_prompt,
                 max_tokens=1000,
@@ -266,7 +285,7 @@ Now, please provide a response following the pattern shown in the examples above
         
         try:
             # Use actual LLM call
-            llm_response = await llm_manager.generate_response(
+            llm_response = await rate_limited_llm_call(
                 provider_type=llm_provider,
                 prompt=enhanced_prompt,
                 max_tokens=1000,
@@ -313,7 +332,7 @@ Let's work through this step by step:"""
         
         try:
             # Use actual LLM call
-            llm_response = await llm_manager.generate_response(
+            llm_response = await rate_limited_llm_call(
                 provider_type=llm_provider,
                 prompt=enhanced_prompt,
                 max_tokens=1000,
@@ -429,7 +448,7 @@ Let's start:"""
         
         try:
             # Use actual LLM call
-            llm_response = await llm_manager.generate_response(
+            llm_response = await rate_limited_llm_call(
                 provider_type=llm_provider,
                 prompt=enhanced_prompt,
                 max_tokens=1000,
@@ -497,7 +516,7 @@ Based on the available context and my knowledge base:"""
         
         try:
             # Use actual LLM call
-            llm_response = await llm_manager.generate_response(
+            llm_response = await rate_limited_llm_call(
                 provider_type=llm_provider,
                 prompt=enhanced_prompt,
                 max_tokens=1200,
@@ -551,7 +570,7 @@ Optimized Prompt:"""
         
         try:
             # First, optimize the prompt
-            optimization_response = await llm_manager.generate_response(
+            optimization_response = await rate_limited_llm_call(
                 provider_type=llm_provider,
                 prompt=optimization_prompt,
                 max_tokens=800,
@@ -561,7 +580,7 @@ Optimized Prompt:"""
             optimized_prompt = optimization_response["response"]
             
             # Then use the optimized prompt
-            final_response = await llm_manager.generate_response(
+            final_response = await rate_limited_llm_call(
                 provider_type=llm_provider,
                 prompt=optimized_prompt,
                 max_tokens=1000,
@@ -619,7 +638,7 @@ Let me work through this systematically with code assistance:
         
         try:
             # Use actual LLM call
-            llm_response = await llm_manager.generate_response(
+            llm_response = await rate_limited_llm_call(
                 provider_type=llm_provider,
                 prompt=enhanced_prompt,
                 max_tokens=1200,
@@ -676,7 +695,7 @@ Factuality Analysis:"""
         
         try:
             # Use actual LLM call
-            llm_response = await llm_manager.generate_response(
+            llm_response = await rate_limited_llm_call(
                 provider_type=llm_provider,
                 prompt=enhanced_prompt,
                 max_tokens=1200,
