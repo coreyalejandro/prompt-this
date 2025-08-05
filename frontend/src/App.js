@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route, Link, useParams } from "react-router-dom";
 import axios from "axios";
+import Exercises from "./Exercises";
 import "./App.css";
 import WorkflowDesigner from "./WorkflowDesigner";
 import OnboardingTutorial from "./OnboardingTutorial";
@@ -481,6 +482,7 @@ const AppContent = () => {
           <Route path="/workflows" element={<WorkflowDesigner />} />
           <Route path="/agent/:agentType" element={<AgentTesterWrapper />} />
           <Route path="/agent/:agentType/info" element={<AgentInfoWrapper />} />
+          <Route path="/exercises/:chapter" element={<ExercisesWrapper />} />
         </Routes>
 
         {/* Footer */}
@@ -524,6 +526,11 @@ const AgentTesterWrapper = () => {
 const AgentInfoWrapper = () => {
   const { agentType } = useParams();
   return <AgentInfo agentType={agentType} />;
+};
+
+const ExercisesWrapper = () => {
+  const { chapter } = useParams();
+  return <Exercises chapter={chapter} />;
 };
 
 export default App;

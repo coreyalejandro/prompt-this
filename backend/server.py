@@ -48,6 +48,7 @@ load_dotenv(ROOT_DIR / '.env')
 mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
+exercises_collection = db["exercises"]
 
 # Create the main app
 app = FastAPI(title="Prompt-This API", version="1.0.0")
@@ -135,6 +136,11 @@ class WorkflowResponse(BaseModel):
     steps: List[AgentResponse]
     created_at: datetime = Field(default_factory=datetime.utcnow)
     completed_at: Optional[datetime] = None
+
+class Exercise(BaseModel):
+    chapter: str
+    question: str
+    solution: str
 
 # Agent Registry
 AGENT_REGISTRY = {}
@@ -729,6 +735,13 @@ WORKFLOW_ENGINE = None
 @api_router.get("/")
 async def root():
     return {"message": "Prompt-This API", "version": "1.0.0"}
+
+@api_router.get("/exercises/{chapter}")
+async def get_exercises(chapter: str):
+    """Fetch exercises for a specific chapter"""
+    docs = await exercises_collection.find({"chapter": chapter}).to_list(100)
+    docs = [serialize_doc(doc) for doc in docs]
+    return {"exercises": docs}
 
 @api_router.get("/agents")
 async def get_agents():
