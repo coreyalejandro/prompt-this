@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route, Link, useParams } from "react-router-dom";
+import Guidebook from "./Guidebook";
 import axios from "axios";
 import "./App.css";
 import WorkflowDesigner from "./WorkflowDesigner";
@@ -451,6 +452,9 @@ const AppContent = () => {
                 <Link to="/workflows" className="text-gray-600 hover:text-gray-800">
                   Workflows
                 </Link>
+                <Link to="/guidebook" className="text-gray-600 hover:text-gray-800">
+                  Guidebook
+                </Link>
                 <button
                   onClick={handleTutorialClick}
                   className="text-gray-600 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
@@ -479,6 +483,7 @@ const AppContent = () => {
         <Routes>
           <Route path="/" element={<AgentLibrary />} />
           <Route path="/workflows" element={<WorkflowDesigner />} />
+          <Route path="/guidebook" element={<Guidebook />} />
           <Route path="/agent/:agentType" element={<AgentTesterWrapper />} />
           <Route path="/agent/:agentType/info" element={<AgentInfoWrapper />} />
         </Routes>

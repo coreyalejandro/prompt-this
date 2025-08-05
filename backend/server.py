@@ -1,4 +1,5 @@
 from fastapi import FastAPI, APIRouter, HTTPException, BackgroundTasks
+from fastapi.responses import HTMLResponse, PlainTextResponse
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -42,6 +43,7 @@ def serialize_doc(doc):
 
 # Load environment variables
 ROOT_DIR = Path(__file__).parent
+GUIDEBOOK_DIR = ROOT_DIR.parent / 'docs' / 'guidebook'
 load_dotenv(ROOT_DIR / '.env')
 
 # MongoDB connection
@@ -959,6 +961,26 @@ async def get_workflow_templates():
     ]
     
     return {"templates": templates}
+
+# Guidebook routes
+@app.get("/guidebook")
+async def list_guidebook_chapters():
+    if not GUIDEBOOK_DIR.exists():
+        raise HTTPException(status_code=404, detail="Guidebook not found")
+    chapters = [f.name for f in GUIDEBOOK_DIR.glob("*.md")]
+    chapters += [f.name for f in GUIDEBOOK_DIR.glob("*.html")]
+    return {"chapters": sorted(chapters)}
+
+
+@app.get("/guidebook/{chapter_name}")
+async def get_guidebook_chapter(chapter_name: str):
+    file_path = GUIDEBOOK_DIR / chapter_name
+    if not file_path.exists() or not file_path.is_file():
+        raise HTTPException(status_code=404, detail="Chapter not found")
+    content = file_path.read_text(encoding="utf-8")
+    if file_path.suffix == ".html":
+        return HTMLResponse(content)
+    return PlainTextResponse(content, media_type="text/markdown")
 
 # Include router
 app.include_router(api_router)
