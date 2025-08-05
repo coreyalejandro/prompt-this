@@ -6,6 +6,7 @@ import WorkflowDesigner from "./WorkflowDesigner";
 import OnboardingTutorial from "./OnboardingTutorial";
 import { AuthProvider, useAuth } from "./AuthContext";
 import LoginModal from "./LoginModal";
+import ProgressDashboard from "./ProgressDashboard";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -69,6 +70,7 @@ const AgentLibrary = () => {
 
 // Agent Testing Component
 const AgentTester = ({ agentType }) => {
+  const { completeExercise } = useAuth();
   const [agent, setAgent] = useState(null);
   const [prompt, setPrompt] = useState("");
   const [context, setContext] = useState("");
@@ -124,6 +126,9 @@ const AgentTester = ({ agentType }) => {
 
       const result = await axios.post(`${API}/agents/process`, requestData);
       setResponse(result.data);
+      if (result.data.status === "completed") {
+        completeExercise(agentType);
+      }
     } catch (error) {
       console.error("Error processing request:", error);
       setResponse({
@@ -409,7 +414,7 @@ const AgentInfo = ({ agentType }) => {
 const AppContent = () => {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
-  const { user, isAuthenticated, logout } = useAuth();
+  const { user, isAuthenticated, logout, completeTutorial } = useAuth();
 
   useEffect(() => {
     // Check if user has completed onboarding
@@ -427,6 +432,7 @@ const AppContent = () => {
 
   const handleOnboardingComplete = () => {
     setShowOnboarding(false);
+    completeTutorial('onboarding');
   };
 
   const handleTutorialClick = () => {
@@ -450,6 +456,9 @@ const AppContent = () => {
                 </Link>
                 <Link to="/workflows" className="text-gray-600 hover:text-gray-800">
                   Workflows
+                </Link>
+                <Link to="/progress" className="text-gray-600 hover:text-gray-800">
+                  Progress
                 </Link>
                 <button
                   onClick={handleTutorialClick}
@@ -481,6 +490,7 @@ const AppContent = () => {
           <Route path="/workflows" element={<WorkflowDesigner />} />
           <Route path="/agent/:agentType" element={<AgentTesterWrapper />} />
           <Route path="/agent/:agentType/info" element={<AgentInfoWrapper />} />
+          <Route path="/progress" element={<ProgressDashboard />} />
         </Routes>
 
         {/* Footer */}
