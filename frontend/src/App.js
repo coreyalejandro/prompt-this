@@ -6,6 +6,7 @@ import WorkflowDesigner from "./WorkflowDesigner";
 import OnboardingTutorial from "./OnboardingTutorial";
 import { AuthProvider, useAuth } from "./AuthContext";
 import LoginModal from "./LoginModal";
+import Profile from "./Profile";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -458,6 +459,11 @@ const AppContent = () => {
                   Tutorial
                 </button>
                 {isAuthenticated && (
+                  <Link to="/profile" className="text-gray-600 hover:text-gray-800">
+                    Profile
+                  </Link>
+                )}
+                {isAuthenticated && (
                   <div className="flex items-center space-x-4">
                     <span className="text-sm text-gray-600 dark:text-gray-300">
                       {user?.username}
@@ -481,6 +487,7 @@ const AppContent = () => {
           <Route path="/workflows" element={<WorkflowDesigner />} />
           <Route path="/agent/:agentType" element={<AgentTesterWrapper />} />
           <Route path="/agent/:agentType/info" element={<AgentInfoWrapper />} />
+          <Route path="/profile" element={<Profile />} />
         </Routes>
 
         {/* Footer */}
