@@ -224,13 +224,13 @@ Refresh this page in a few seconds to see progress!`);
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-2 py-4 sm:px-4 sm:py-8">
       <h1 className="text-3xl font-bold text-gray-800 mb-8">Workflow Orchestration</h1>
 
       {/* Tab Navigation */}
       <div className="mb-6">
         <div className="border-b border-gray-200">
-          <nav className="-mb-px flex space-x-8">
+          <nav className="-mb-px flex flex-wrap gap-4 sm:gap-8">
             <button
               onClick={() => setActiveTab("designer")}
               className={`py-2 px-1 border-b-2 font-medium text-sm ${
@@ -267,13 +267,13 @@ Refresh this page in a few seconds to see progress!`);
 
       {/* Designer Tab */}
       {activeTab === "designer" && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
           {/* Workflow Configuration */}
           <div className="lg:col-span-2">
             <div className="glass rounded-lg shadow-md p-6">
-              <div className="flex justify-between items-center mb-6">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-4">
                 <h2 className="text-xl font-semibold">Workflow Designer</h2>
-                <div className="space-x-2">
+                <div className="flex flex-col sm:flex-row gap-2">
                   <button
                     onClick={resetWorkflow}
                     className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
@@ -504,14 +504,14 @@ Refresh this page in a few seconds to see progress!`);
           )}
 
           {workflows.map(workflow => (
-            <div key={workflow.id} className="glass rounded-lg shadow-md p-6">
-              <div className="flex justify-between items-start">
+            <div key={workflow.id} className="glass rounded-lg shadow-md p-4 sm:p-6">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
                 <div>
                   <h3 className="text-xl font-semibold">{workflow.name}</h3>
                   {workflow.description && (
                     <p className="text-gray-600 mt-1">{workflow.description}</p>
                   )}
-                  <div className="mt-2 flex items-center space-x-4">
+                  <div className="mt-2 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
                     <span className="text-sm text-gray-500">
                       {workflow.steps?.length || 0} steps
                     </span>
@@ -528,7 +528,7 @@ Refresh this page in a few seconds to see progress!`);
                     </span>
                   </div>
                 </div>
-                <div className="space-x-2">
+                <div className="flex flex-col sm:flex-row gap-2">
                   <button
                     onClick={() => executeWorkflow(workflow.id)}
                     disabled={loading || workflow.status === 'running'}
