@@ -25,7 +25,7 @@ const LoginModal = ({ isOpen, onClose }) => {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="glass rounded-lg shadow-xl max-w-md w-full p-4 sm:p-6">
         <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4">Welcome to Prompt-This!</h2>
-        <p className="text-sm sm:text-base text-gray-600 mb-6">
+        <p className="text-base sm:text-base text-gray-600 mb-6">
           To save your workflows and track your progress, please choose how you'd like to continue:
         </p>
 
