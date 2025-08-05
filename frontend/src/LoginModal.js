@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useAuth } from './AuthContext';
 
@@ -22,9 +23,9 @@ const LoginModal = ({ isOpen, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="glass rounded-lg shadow-xl max-w-md w-full p-6">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">Welcome to Prompt-This!</h2>
-        <p className="text-gray-600 mb-6">
+      <div className="glass rounded-lg shadow-xl max-w-md w-full p-4 sm:p-6">
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4">Welcome to Prompt-This!</h2>
+        <p className="text-sm sm:text-base text-gray-600 mb-6">
           To save your workflows and track your progress, please choose how you'd like to continue:
         </p>
 
@@ -37,7 +38,7 @@ const LoginModal = ({ isOpen, onClose }) => {
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full p-2 sm:p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               placeholder="Enter your name..."
             />
           </div>
@@ -46,15 +47,15 @@ const LoginModal = ({ isOpen, onClose }) => {
             <button
               type="submit"
               disabled={!username.trim()}
-              className="w-full bg-blue-500 text-white py-3 px-4 rounded-lg hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+              className="w-full bg-blue-500 text-white py-2 sm:py-3 px-4 rounded-lg hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
             >
               Continue as "{username || 'Your Name'}"
             </button>
-            
+
             <button
               type="button"
               onClick={handleQuickLogin}
-              className="w-full bg-gray-500 text-white py-3 px-4 rounded-lg hover:bg-gray-600 transition-colors"
+              className="w-full bg-gray-500 text-white py-2 sm:py-3 px-4 rounded-lg hover:bg-gray-600 transition-colors"
             >
               Continue as Guest
             </button>
