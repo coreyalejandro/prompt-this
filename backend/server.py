@@ -1,5 +1,6 @@
-from fastapi import FastAPI, APIRouter, HTTPException, BackgroundTasks
+from fastapi import FastAPI, APIRouter, HTTPException, BackgroundTasks, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from dotenv import load_dotenv
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
@@ -8,12 +9,14 @@ from pathlib import Path
 from pydantic import BaseModel, Field
 from typing import List, Dict, Any, Optional, Literal
 import uuid
-from datetime import datetime
+from datetime import datetime, timedelta
 from enum import Enum
 import asyncio
 import json
 import sys
 from pathlib import Path
+from jose import JWTError, jwt
+from passlib.context import CryptContext
 
 # Add the backend directory to Python path
 sys.path.append(str(Path(__file__).parent))
@@ -52,6 +55,73 @@ db = client[os.environ['DB_NAME']]
 # Create the main app
 app = FastAPI(title="Prompt-This API", version="1.0.0")
 api_router = APIRouter(prefix="/api")
+
+# Authentication setup
+SECRET_KEY = os.environ.get("SECRET_KEY", "change-me")
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/token")
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+    user: Dict[str, Any]
+
+
+class User(BaseModel):
+    username: str
+
+
+class UserCreate(User):
+    password: str
+
+
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    return pwd_context.verify(plain_password, hashed_password)
+
+
+def get_password_hash(password: str) -> str:
+    return pwd_context.hash(password)
+
+
+async def get_user(username: str) -> Optional[Dict[str, Any]]:
+    return await db.users.find_one({"username": username})
+
+
+async def authenticate_user(username: str, password: str) -> Optional[Dict[str, Any]]:
+    user = await get_user(username)
+    if not user or not verify_password(password, user.get("hashed_password", "")):
+        return None
+    return user
+
+
+def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
+    to_encode = data.copy()
+    expire = datetime.utcnow() + (expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
+    to_encode.update({"exp": expire})
+    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+
+
+async def get_current_user(token: str = Depends(oauth2_scheme)) -> Dict[str, Any]:
+    credentials_exception = HTTPException(
+        status_code=401,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username: Optional[str] = payload.get("sub")
+        if username is None:
+            raise credentials_exception
+    except JWTError:
+        raise credentials_exception
+    user = await get_user(username)
+    if user is None:
+        raise credentials_exception
+    return user
 
 # CORS middleware
 app.add_middleware(
@@ -726,6 +796,36 @@ def initialize_agents():
 WORKFLOW_ENGINE = None
 
 # API Routes
+
+
+@api_router.post("/signup", response_model=Token)
+async def signup(user: UserCreate):
+    existing = await get_user(user.username)
+    if existing:
+        raise HTTPException(status_code=400, detail="Username already registered")
+    hashed_password = get_password_hash(user.password)
+    await db.users.insert_one({"username": user.username, "hashed_password": hashed_password})
+    access_token = create_access_token({"sub": user.username})
+    return {"access_token": access_token, "token_type": "bearer", "user": {"username": user.username}}
+
+
+@api_router.post("/token", response_model=Token)
+async def login(form_data: OAuth2PasswordRequestForm = Depends()):
+    user = await authenticate_user(form_data.username, form_data.password)
+    if not user:
+        raise HTTPException(status_code=401, detail="Incorrect username or password")
+    access_token = create_access_token({"sub": user["username"]})
+    return {"access_token": access_token, "token_type": "bearer", "user": {"username": user["username"]}}
+
+
+@api_router.get("/progress")
+async def get_progress(current_user: Dict[str, Any] = Depends(get_current_user)):
+    return {"user": current_user["username"], "progress": []}
+
+
+@api_router.get("/exercises")
+async def get_exercises(current_user: Dict[str, Any] = Depends(get_current_user)):
+    return {"user": current_user["username"], "exercises": []}
 @api_router.get("/")
 async def root():
     return {"message": "Prompt-This API", "version": "1.0.0"}
