@@ -136,6 +136,17 @@ class WorkflowResponse(BaseModel):
     created_at: datetime = Field(default_factory=datetime.utcnow)
     completed_at: Optional[datetime] = None
 
+
+class FeedbackRequest(BaseModel):
+    """Request model for prompt feedback"""
+    prompt: str
+    llm_provider: LLMProvider = LLMProvider.OPENAI
+
+
+class FeedbackResponse(BaseModel):
+    """Response model for prompt feedback"""
+    feedback: str
+
 # Agent Registry
 AGENT_REGISTRY = {}
 
@@ -778,6 +789,30 @@ async def get_session_history(session_id: str):
     # Serialize to handle ObjectId
     responses = [serialize_doc(response) for response in responses]
     return {"session_id": session_id, "responses": responses}
+
+
+@api_router.post("/feedback", response_model=FeedbackResponse)
+async def generate_feedback(request: FeedbackRequest):
+    """Evaluate a prompt and provide improvement suggestions using an LLM"""
+    try:
+        evaluation_prompt = (
+            "You are a helpful prompt engineer. Given the following prompt, "
+            "provide suggestions and improvement tips to make it clearer and more effective.\n\n"
+            f"Prompt:\n{request.prompt}"
+        )
+
+        llm_response = await llm_manager.generate_response(
+            provider_type=request.llm_provider,
+            prompt=evaluation_prompt,
+            max_tokens=300,
+            temperature=0.5,
+        )
+
+        feedback_text = llm_response.get("response", "")
+        return FeedbackResponse(feedback=feedback_text)
+    except Exception as e:
+        logger.error(f"Feedback generation failed: {str(e)}")
+        raise HTTPException(status_code=500, detail="Failed to generate feedback")
 
 # Workflow API Endpoints
 @api_router.post("/workflows")

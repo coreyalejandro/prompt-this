@@ -6,6 +6,7 @@ import WorkflowDesigner from "./WorkflowDesigner";
 import OnboardingTutorial from "./OnboardingTutorial";
 import { AuthProvider, useAuth } from "./AuthContext";
 import LoginModal from "./LoginModal";
+import FeedbackPanel from "./FeedbackPanel";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -75,6 +76,7 @@ const AgentTester = ({ agentType }) => {
   const [examples, setExamples] = useState([{ input: "", output: "" }]);
   const [llmProvider, setLlmProvider] = useState("openai");
   const [response, setResponse] = useState(null);
+  const [feedback, setFeedback] = useState(null);
   const [loading, setLoading] = useState(false);
   const [showExamples, setShowExamples] = useState(false);
 
@@ -110,6 +112,7 @@ const AgentTester = ({ agentType }) => {
     e.preventDefault();
     setLoading(true);
     setResponse(null);
+    setFeedback(null);
 
     try {
       const requestData = {
@@ -124,6 +127,17 @@ const AgentTester = ({ agentType }) => {
 
       const result = await axios.post(`${API}/agents/process`, requestData);
       setResponse(result.data);
+
+      // Fetch feedback for the submitted prompt
+      try {
+        const fb = await axios.post(`${API}/feedback`, {
+          prompt,
+          llm_provider: llmProvider,
+        });
+        setFeedback(fb.data.feedback);
+      } catch (err) {
+        console.error("Error fetching feedback:", err);
+      }
     } catch (error) {
       console.error("Error processing request:", error);
       setResponse({
@@ -335,6 +349,9 @@ const AgentTester = ({ agentType }) => {
                   <p className="text-red-700">{response.error}</p>
                 </div>
               )}
+
+              {/* Feedback Suggestions */}
+              <FeedbackPanel feedback={feedback} />
             </div>
           )}
 
