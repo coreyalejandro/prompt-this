@@ -812,7 +812,9 @@ async def generate_feedback(request: FeedbackRequest):
         return FeedbackResponse(feedback=feedback_text)
     except Exception as e:
         logger.error(f"Feedback generation failed: {str(e)}")
-        raise HTTPException(status_code=500, detail="Failed to generate feedback")
+        raise HTTPException(
+            status_code=500, detail="Failed to generate feedback"
+        ) from e
 
 # Workflow API Endpoints
 @api_router.post("/workflows")
