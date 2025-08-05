@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useAuth } from './AuthContext';
 
@@ -26,11 +27,13 @@ const LoginModal = ({ isOpen, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="glass rounded-lg shadow-xl max-w-md w-full p-6">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">
-          {isSignup ? 'Sign Up' : 'Log In'}
-        </h2>
-        {error && <p className="text-red-500 mb-2">{error}</p>}
+<div className="glass rounded-lg shadow-xl max-w-md w-full p-6">
+  <h2 className="text-2xl font-bold text-gray-800 mb-4">
+    {isSignup ? 'Sign Up' : 'Log In'}
+  </h2>
+  {error && <p className="text-red-500 mb-2">{error}</p>}
+  {/* Additional content can go here */}
+</div>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Username</label>
@@ -41,14 +44,36 @@ const LoginModal = ({ isOpen, onClose }) => {
               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            />
+<div className="space-y-3">
+  {/* Username Button */}
+  <button
+    type="submit"
+    disabled={!username.trim()}
+    className="w-full bg-blue-500 text-white py-2 sm:py-3 px-4 rounded-lg hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+  >
+    Continue as "{username || 'Your Name'}"
+  </button>
+
+  {/* Guest Button */}
+  <button
+    type="button"
+    onClick={handleQuickLogin}
+    className="w-full bg-gray-500 text-white py-2 sm:py-3 px-4 rounded-lg hover:bg-gray-600 transition-colors"
+  >
+    Continue as Guest
+  </button>
+
+  {/* Password Input */}
+  <div>
+    <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
+    <input
+      type="password"
+      value={password}
+      onChange={(e) => setPassword(e.target.value)}
+      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+    />
+  </div>
+</div>
           </div>
           <button
             type="submit"

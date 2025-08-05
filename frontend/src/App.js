@@ -445,11 +445,14 @@ const AppContent = () => {
         {/* Header */}
         <header className="bg-white/70 dark:bg-gray-800/50 backdrop-blur-md shadow-sm">
           <div className="container mx-auto px-4 py-4">
-            <div className="flex justify-between items-center">
-              <Link to="/" className="text-xl font-bold text-gray-800 dark:text-gray-100">
-                {t('title')}
+<div className="flex flex-col sm:flex-row sm:justify-between sm:items-center">
+  <Link to="/" className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4 sm:mb-0">
+    {t('title')}
+  </Link>
+  {/* You can add other elements here if needed */}
+</div>
               </Link>
-              <nav className="flex items-center space-x-6">
+              <nav className="flex flex-col sm:flex-row items-center sm:justify-end gap-2 sm:gap-6">
                 <Link to="/" className="text-gray-600 hover:text-gray-800">
                   {t('agents')}
                 </Link>
@@ -474,7 +477,7 @@ const AppContent = () => {
                   <option value="es">ES</option>
                 </select>
                 {isAuthenticated && (
-                  <div className="flex items-center space-x-4">
+                  <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
                     <span className="text-sm text-gray-600 dark:text-gray-300">
                       {user?.username}
                     </span>
@@ -549,4 +552,4 @@ const ExercisesWrapper = () => {
   return <Exercises chapter={chapter} />;
 };
 
-export default App;
+export default ExercisesWrapper;
