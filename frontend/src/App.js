@@ -8,6 +8,7 @@ import WorkflowDesigner from "./WorkflowDesigner";
 import OnboardingTutorial from "./OnboardingTutorial";
 import { AuthProvider, useAuth } from "./AuthContext";
 import LoginModal from "./LoginModal";
+import FeedbackPanel from "./FeedbackPanel";
 import ProgressDashboard from "./ProgressDashboard";
 import Forum from "./Forum";
 import Profile from "./Profile";
@@ -83,6 +84,7 @@ const AgentTester = ({ agentType }) => {
   const [examples, setExamples] = useState([{ input: "", output: "" }]);
   const [llmProvider, setLlmProvider] = useState("openai");
   const [response, setResponse] = useState(null);
+  const [feedback, setFeedback] = useState(null);
   const [loading, setLoading] = useState(false);
   const [showExamples, setShowExamples] = useState(false);
 
@@ -118,6 +120,7 @@ const AgentTester = ({ agentType }) => {
     e.preventDefault();
     setLoading(true);
     setResponse(null);
+    setFeedback(null);
 
     try {
       const requestData = {
@@ -132,8 +135,20 @@ const AgentTester = ({ agentType }) => {
 
       const result = await axios.post(`${API}/agents/process`, requestData);
       setResponse(result.data);
-      if (result.data.status === "completed") {
-        completeExercise(agentType);
+try {
+  const fb = await axios.post(`${API}/feedback`, {
+    prompt,
+    llm_provider: llmProvider,
+  });
+  setFeedback(fb.data.feedback);
+} catch (err) {
+  console.error("Error fetching feedback:", err);
+}
+
+if (result.data.status === "completed") {
+  completeExercise(agentType);
+}
+
       }
     } catch (error) {
       console.error("Error processing request:", error);
@@ -346,6 +361,9 @@ const AgentTester = ({ agentType }) => {
                   <p className="text-red-700">{response.error}</p>
                 </div>
               )}
+
+              {/* Feedback Suggestions */}
+              <FeedbackPanel feedback={feedback} />
             </div>
           )}
 

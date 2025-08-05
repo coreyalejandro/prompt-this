@@ -222,34 +222,10 @@ class WorkflowResponse(BaseModel):
     created_at: datetime = Field(default_factory=datetime.utcnow)
     completed_at: Optional[datetime] = None
 
-from pydantic import BaseModel, Field
-from typing import List, Optional
-from datetime import datetime
+<Link to="/profile" className="text-gray-600 hover:text-gray-800">
+  Profile
+</Link>
 
-class UserProgress(BaseModel):
-    user_id: str
-    completed_exercises: List[str] = []
-    completed_tutorials: List[str] = []
-
-class Achievement(BaseModel):
-    name: str
-    icon: str
-    description: Optional[str] = None
-    awarded_at: datetime = Field(default_factory=datetime.utcnow)
-
-class UserAchievements(BaseModel):
-    user_id: str
-    achievements: List[Achievement] = Field(default_factory=list)
-
-class UserPoints(BaseModel):
-    user_id: str
-    points: int = 0
-
-# New Exercise model
-class Exercise(BaseModel):
-    chapter: str
-    question: str
-    solution: str
 
 # Agent Registry
 AGENT_REGISTRY = {}
@@ -986,52 +962,43 @@ async def get_session_history(session_id: str):
     # Serialize to handle ObjectId
     responses = [serialize_doc(response) for response in responses]
     return {"session_id": session_id, "responses": responses}
+from fastapi import APIRouter, HTTPException
+from app.models import FeedbackRequest, FeedbackResponse
+from app.services.llm_manager import llm_manager
+from app.logging import logger  # Use structured logging if available
 
-# User Progress Endpoints
-@api_router.post("/user-progress", response_model=UserProgress)
-async def create_user_progress(progress: UserProgress):
-    existing = await db.user_progress.find_one({"user_id": progress.user_id})
-    if existing:
-        raise HTTPException(status_code=400, detail="Progress already exists")
-    await db.user_progress.insert_one(progress.dict())
-    return progress
+api_router = APIRouter()
 
-@api_router.get("/user-progress/{user_id}", response_model=UserProgress)
-async def get_user_progress(user_id: str):
-    progress = await db.user_progress.find_one({"user_id": user_id})
-    if not progress:
-        raise HTTPException(status_code=404, detail="User progress not found")
-    return UserProgress(**progress)
 
-@api_router.put("/user-progress/{user_id}", response_model=UserProgress)
-async def update_user_progress(user_id: str, progress: UserProgress):
-    updated = await db.user_progress.find_one_and_update(
-        {"user_id": user_id},
-        {"$set": progress.dict()},
-        return_document=True,
+@api_router.post("/feedback", response_model=FeedbackResponse)
+async def generate_feedback(request: FeedbackRequest) -> FeedbackResponse:
+    """
+    Evaluate a user prompt and provide improvement suggestions using an LLM.
+    """
+    evaluation_prompt = (
+        "You are a helpful prompt engineer. Given the following prompt, "
+        "provide suggestions and improvement tips to make it clearer and more effective.\n\n"
+        f"Prompt:\n{request.prompt}"
     )
-    if not updated:
-        raise HTTPException(status_code=404, detail="User progress not found")
-    return UserProgress(**updated)
 
-@api_router.delete("/user-progress/{user_id}")
-async def delete_user_progress(user_id: str):
-    result = await db.user_progress.delete_one({"user_id": user_id})
-    if result.deleted_count == 0:
-        raise HTTPException(status_code=404, detail="User progress not found")
-    return {"status": "deleted"}
+    try:
+        response = await llm_manager.generate_response(
+            provider_type=request.llm_provider,
+            prompt=evaluation_prompt,
+            max_tokens=300,
+            temperature=0.5,
+        )
+    except Exception as e:
+        logger.error("LLM response generation failed", extra={"error": str(e), "request": request.dict()})
+        raise HTTPException(status_code=500, detail="LLM failed to generate feedback.") from e
 
-# Fetch user profile (Points and Achievements)
-@api_router.get("/users/{user_id}/profile")
-async def get_user_profile(user_id: str):
-    """Get user points and achievements"""
-    points_doc = await db.user_points.find_one({"user_id": user_id}) or {}
-    achievements_doc = await db.user_achievements.find_one({"user_id": user_id}) or {}
-    return {
-        "user_id": user_id,
-        "points": points_doc.get("points", 0),
-        "achievements": achievements_doc.get("achievements", [])
-    }
+    feedback_text = response.get("response", "").strip()
+    if not feedback_text:
+        logger.warning("Empty feedback response from LLM", extra={"request": request.dict()})
+        raise HTTPException(status_code=502, detail="Received empty feedback from LLM.")
+
+    return FeedbackResponse(feedback=feedback_text)
+
 
 # Workflow API Endpoints
 @api_router.post("/workflows")
