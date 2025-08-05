@@ -222,6 +222,25 @@ class WorkflowResponse(BaseModel):
     created_at: datetime = Field(default_factory=datetime.utcnow)
     completed_at: Optional[datetime] = None
 
+from datetime import datetime
+from pydantic import BaseModel, Field
+from typing import Optional, List
+
+class Achievement(BaseModel):
+    name: str
+    icon: str
+    description: Optional[str] = None
+    awarded_at: datetime = Field(default_factory=datetime.utcnow)
+
+class UserAchievements(BaseModel):
+    user_id: str
+    achievements: List[Achievement] = Field(default_factory=list)
+
+class UserPoints(BaseModel):
+    user_id: str
+    points: int = 0
+
+# New Exercise model
 class Exercise(BaseModel):
     chapter: str
     question: str
@@ -229,6 +248,55 @@ class Exercise(BaseModel):
 
 # Agent Registry
 AGENT_REGISTRY = {}
+
+
+BADGE_THRESHOLDS = [
+    (100, {"name": "Bronze", "icon": "🥉"}),
+    (500, {"name": "Silver", "icon": "🥈"}),
+    (1000, {"name": "Gold", "icon": "🥇"}),
+]
+
+
+def extract_user_id(session_id: Optional[str]) -> Optional[str]:
+    if not session_id:
+        return None
+    if session_id.startswith("user_"):
+        return session_id[5:].rsplit("_", 1)[0]
+    return session_id
+
+
+async def award_points(user_id: Optional[str], points: int):
+    if not user_id:
+        return
+
+    points_doc = await db.user_points.find_one({"user_id": user_id})
+    if points_doc:
+        new_points = points_doc.get("points", 0) + points
+        await db.user_points.update_one(
+            {"user_id": user_id}, {"$set": {"points": new_points}}
+        )
+    else:
+        new_points = points
+        await db.user_points.insert_one(UserPoints(user_id=user_id, points=new_points).dict())
+
+    achievements_doc = await db.user_achievements.find_one({"user_id": user_id})
+    if achievements_doc:
+        achievements_list = achievements_doc.get("achievements", [])
+    else:
+        achievements_list = []
+        await db.user_achievements.insert_one(UserAchievements(user_id=user_id).dict())
+
+    updated = False
+    for threshold, badge in BADGE_THRESHOLDS:
+        if new_points >= threshold and not any(a.get("name") == badge["name"] for a in achievements_list):
+            achievements_list.append(badge)
+            updated = True
+
+    if updated:
+        await db.user_achievements.update_one(
+            {"user_id": user_id}, {"$set": {"achievements": achievements_list}}
+        )
+
 
 class BaseAgent:
     def __init__(self, agent_type: AgentType):
@@ -882,10 +950,15 @@ async def process_agent_request(request: AgentRequest):
     
     agent = AGENT_REGISTRY[request.agent_type]
     response = await agent.process(request.request, request.llm_provider)
-    
+
+    response_doc = response.dict()
+    if request.session_id:
+        response_doc["session_id"] = request.session_id
+        await award_points(extract_user_id(request.session_id), 10)
+
     # Store in database
-    await db.agent_responses.insert_one(response.dict())
-    
+    await db.agent_responses.insert_one(response_doc)
+
     return response
 
 @api_router.get("/agents/{agent_type}")
@@ -908,6 +981,18 @@ async def get_session_history(session_id: str):
     # Serialize to handle ObjectId
     responses = [serialize_doc(response) for response in responses]
     return {"session_id": session_id, "responses": responses}
+
+
+@api_router.get("/users/{user_id}/profile")
+async def get_user_profile(user_id: str):
+    """Get user points and achievements"""
+    points_doc = await db.user_points.find_one({"user_id": user_id}) or {}
+    achievements_doc = await db.user_achievements.find_one({"user_id": user_id}) or {}
+    return {
+        "user_id": user_id,
+        "points": points_doc.get("points", 0),
+        "achievements": achievements_doc.get("achievements", []),
+    }
 
 # Workflow API Endpoints
 @api_router.post("/workflows")
@@ -951,6 +1036,8 @@ async def execute_workflow_task(workflow_id: str):
         workflow = await WORKFLOW_ENGINE.execute_workflow(workflow_id)
         # Update in database
         await db.workflows.replace_one({"id": workflow_id}, workflow.dict())
+        if workflow.session_id:
+            await award_points(extract_user_id(workflow.session_id), 50)
         logger.info(f"Workflow {workflow_id} completed")
     except Exception as e:
         logger.error(f"Workflow {workflow_id} failed: {str(e)}")

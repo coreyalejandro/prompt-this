@@ -8,6 +8,7 @@ import WorkflowDesigner from "./WorkflowDesigner";
 import OnboardingTutorial from "./OnboardingTutorial";
 import { AuthProvider, useAuth } from "./AuthContext";
 import LoginModal from "./LoginModal";
+import Profile from "./Profile";
 import { useTranslation } from "react-i18next";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -477,7 +478,8 @@ const AppContent = () => {
                   <option value="es">ES</option>
                 </select>
                 {isAuthenticated && (
-                  <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
+import Profile from "./Profile";
+import { useTranslation } from "react-i18next";
                     <span className="text-sm text-gray-600 dark:text-gray-300">
                       {user?.username}
                     </span>
@@ -501,7 +503,8 @@ const AppContent = () => {
           <Route path="/guidebook" element={<Guidebook />} />
           <Route path="/agent/:agentType" element={<AgentTesterWrapper />} />
           <Route path="/agent/:agentType/info" element={<AgentInfoWrapper />} />
-          <Route path="/exercises/:chapter" element={<ExercisesWrapper />} />
+<Route path="/profile" element={<Profile />} />
+<Route path="/exercises/:chapter" element={<ExercisesWrapper />} />
         </Routes>
 
         {/* Footer */}
