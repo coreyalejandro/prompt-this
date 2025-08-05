@@ -960,6 +960,42 @@ async def get_workflow_templates():
     
     return {"templates": templates}
 
+# Forum integration
+try:
+    from flask import Flask
+    from flask_discuss import Discuss
+    from starlette.middleware.wsgi import WSGIMiddleware
+
+    flask_forum = Flask(__name__)
+    Discuss(flask_forum)
+    app.mount("/forum", WSGIMiddleware(flask_forum))
+except Exception:  # pragma: no cover - fallback when package missing
+    forum_router = APIRouter(prefix="/forum")
+
+    class ForumThread(BaseModel):
+        id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+        title: str
+        content: str
+        created_at: datetime = Field(default_factory=datetime.utcnow)
+
+    class ThreadCreate(BaseModel):
+        title: str
+        content: str
+
+    forum_threads: List[ForumThread] = []
+
+    @forum_router.get("/threads", response_model=List[ForumThread])
+    async def list_threads() -> List[ForumThread]:
+        return forum_threads
+
+    @forum_router.post("/threads", response_model=ForumThread)
+    async def create_thread(thread: ThreadCreate) -> ForumThread:
+        new_thread = ForumThread(title=thread.title, content=thread.content)
+        forum_threads.append(new_thread)
+        return new_thread
+
+    app.include_router(forum_router)
+
 # Include router
 app.include_router(api_router)
 

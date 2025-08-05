@@ -6,6 +6,7 @@ import WorkflowDesigner from "./WorkflowDesigner";
 import OnboardingTutorial from "./OnboardingTutorial";
 import { AuthProvider, useAuth } from "./AuthContext";
 import LoginModal from "./LoginModal";
+import Forum from "./Forum";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -451,6 +452,9 @@ const AppContent = () => {
                 <Link to="/workflows" className="text-gray-600 hover:text-gray-800">
                   Workflows
                 </Link>
+                <Link to="/forum" className="text-gray-600 hover:text-gray-800">
+                  Forum
+                </Link>
                 <button
                   onClick={handleTutorialClick}
                   className="text-gray-600 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
@@ -479,6 +483,7 @@ const AppContent = () => {
         <Routes>
           <Route path="/" element={<AgentLibrary />} />
           <Route path="/workflows" element={<WorkflowDesigner />} />
+          <Route path="/forum" element={<Forum />} />
           <Route path="/agent/:agentType" element={<AgentTesterWrapper />} />
           <Route path="/agent/:agentType/info" element={<AgentInfoWrapper />} />
         </Routes>
