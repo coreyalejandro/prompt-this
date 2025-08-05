@@ -1,0 +1,14 @@
+{
+  "title": "Prompt-This - Plataforma de Agentes de Ingeniería de Prompts",
+  "agents": "Agentes",
+  "workflows": "Flujos de trabajo",
+  "tutorial": "Tutorial",
+  "logout": "Cerrar sesión",
+  "agentLibrary": "Biblioteca de Agentes",
+  "testAgent": "Probar Agente",
+  "viewInfo": "Ver Información",
+  "builtWith": "Construido con FastAPI + React | Prompt-This - Ingeniería de Prompts Correcta",
+  "documentation": "Documentación",
+  "apiDocs": "Docs de API",
+  "troubleshooting": "Resolución de Problemas"
+}

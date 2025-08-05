@@ -7,12 +7,14 @@ import WorkflowDesigner from "./WorkflowDesigner";
 import OnboardingTutorial from "./OnboardingTutorial";
 import { AuthProvider, useAuth } from "./AuthContext";
 import LoginModal from "./LoginModal";
+import { useTranslation } from "react-i18next";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
 // Agent Library Component
 const AgentLibrary = () => {
+  const { t } = useTranslation();
   const [agents, setAgents] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -41,7 +43,7 @@ const AgentLibrary = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-gray-800 mb-8">Agent Library</h1>
+      <h1 className="text-3xl font-bold text-gray-800 mb-8">{t('agentLibrary')}</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {agents.map((agent) => (
           <div key={agent.type} className="glass rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
@@ -52,13 +54,13 @@ const AgentLibrary = () => {
                 to={`/agent/${agent.type}`}
                 className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
               >
-                Test Agent
+                {t('testAgent')}
               </Link>
               <Link
                 to={`/agent/${agent.type}/info`}
                 className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition-colors"
               >
-                View Info
+                {t('viewInfo')}
               </Link>
             </div>
           </div>
@@ -411,6 +413,7 @@ const AppContent = () => {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const { user, isAuthenticated, logout } = useAuth();
+  const { t, i18n } = useTranslation();
 
   useEffect(() => {
     // Check if user has completed onboarding
@@ -443,14 +446,14 @@ const AppContent = () => {
           <div className="container mx-auto px-4 py-4">
             <div className="flex justify-between items-center">
               <Link to="/" className="text-xl font-bold text-gray-800 dark:text-gray-100">
-                Prompt-This - Prompt Engineering Agent Platform
+                {t('title')}
               </Link>
               <nav className="flex items-center space-x-6">
                 <Link to="/" className="text-gray-600 hover:text-gray-800">
-                  Agents
+                  {t('agents')}
                 </Link>
                 <Link to="/workflows" className="text-gray-600 hover:text-gray-800">
-                  Workflows
+                  {t('workflows')}
                 </Link>
                 <Link to="/guidebook" className="text-gray-600 hover:text-gray-800">
                   Guidebook
@@ -459,8 +462,16 @@ const AppContent = () => {
                   onClick={handleTutorialClick}
                   className="text-gray-600 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
                 >
-                  Tutorial
+                  {t('tutorial')}
                 </button>
+                <select
+                  value={i18n.language}
+                  onChange={(e) => i18n.changeLanguage(e.target.value)}
+                  className="border rounded p-1 text-sm bg-transparent"
+                >
+                  <option value="en">EN</option>
+                  <option value="es">ES</option>
+                </select>
                 {isAuthenticated && (
                   <div className="flex items-center space-x-4">
                     <span className="text-sm text-gray-600 dark:text-gray-300">
@@ -470,7 +481,7 @@ const AppContent = () => {
                       onClick={logout}
                       className="text-sm text-gray-500 hover:text-gray-700"
                     >
-                      Logout
+                      {t('logout')}
                     </button>
                   </div>
                 )}
@@ -491,11 +502,11 @@ const AppContent = () => {
         {/* Footer */}
         <footer className="bg-white border-t mt-12">
           <div className="container mx-auto px-4 py-6 text-center text-gray-600">
-            <p>Built with FastAPI + React | Prompt-This - Prompt Engineering Done Right</p>
+            <p>{t('builtWith')}</p>
             <div className="mt-2 text-sm space-x-4">
-              <a href="/docs/README.md" className="text-blue-500 hover:text-blue-700">Documentation</a>
-              <a href="/docs/API_DOCUMENTATION.md" className="text-blue-500 hover:text-blue-700">API Docs</a>
-              <a href="/docs/TROUBLESHOOTING_GUIDE.md" className="text-blue-500 hover:text-blue-700">Troubleshooting</a>
+              <a href="/docs/README.md" className="text-blue-500 hover:text-blue-700">{t('documentation')}</a>
+              <a href="/docs/API_DOCUMENTATION.md" className="text-blue-500 hover:text-blue-700">{t('apiDocs')}</a>
+              <a href="/docs/TROUBLESHOOTING_GUIDE.md" className="text-blue-500 hover:text-blue-700">{t('troubleshooting')}</a>
             </div>
           </div>
         </footer>

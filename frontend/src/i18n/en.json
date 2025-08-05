@@ -1,0 +1,14 @@
+{
+  "title": "Prompt-This - Prompt Engineering Agent Platform",
+  "agents": "Agents",
+  "workflows": "Workflows",
+  "tutorial": "Tutorial",
+  "logout": "Logout",
+  "agentLibrary": "Agent Library",
+  "testAgent": "Test Agent",
+  "viewInfo": "View Info",
+  "builtWith": "Built with FastAPI + React | Prompt-This - Prompt Engineering Done Right",
+  "documentation": "Documentation",
+  "apiDocs": "API Docs",
+  "troubleshooting": "Troubleshooting"
+}

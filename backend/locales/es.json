@@ -1,0 +1,6 @@
+{
+  "workflow_cancelled": "Flujo de trabajo {workflow_id} cancelado",
+  "workflow_started": "Ejecución del flujo de trabajo {workflow_id} iniciada",
+  "workflow_not_found": "Flujo de trabajo no encontrado",
+  "workflow_not_active": "Flujo de trabajo no encontrado o no activo"
+}

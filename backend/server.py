@@ -21,6 +21,7 @@ sys.path.append(str(Path(__file__).parent))
 
 from llm_providers import LLMProviderManager, llm_manager
 from workflow_engine import WorkflowEngine, get_workflow_engine, Workflow, WorkflowStep
+from i18n import translate
 
 # Custom JSON encoder for MongoDB ObjectId
 from bson import ObjectId
@@ -803,7 +804,7 @@ async def create_workflow(request: Dict[str, Any]):
     return workflow.dict()
 
 @api_router.post("/workflows/{workflow_id}/execute")
-async def execute_workflow(workflow_id: str, background_tasks: BackgroundTasks):
+async def execute_workflow(workflow_id: str, background_tasks: BackgroundTasks, lang: str = "en"):
     """Execute a workflow"""
     global WORKFLOW_ENGINE
     if not WORKFLOW_ENGINE:
@@ -812,7 +813,10 @@ async def execute_workflow(workflow_id: str, background_tasks: BackgroundTasks):
     # Execute workflow in background
     background_tasks.add_task(execute_workflow_task, workflow_id)
     
-    return {"message": f"Workflow {workflow_id} execution started", "workflow_id": workflow_id}
+    return {
+        "message": translate(lang, "workflow_started", workflow_id=workflow_id),
+        "workflow_id": workflow_id,
+    }
 
 async def execute_workflow_task(workflow_id: str):
     """Background task to execute workflow"""
@@ -825,7 +829,7 @@ async def execute_workflow_task(workflow_id: str):
         logger.error(f"Workflow {workflow_id} failed: {str(e)}")
 
 @api_router.get("/workflows/{workflow_id}")
-async def get_workflow(workflow_id: str):
+async def get_workflow(workflow_id: str, lang: str = "en"):
     """Get workflow details"""
     global WORKFLOW_ENGINE
     if not WORKFLOW_ENGINE:
@@ -836,7 +840,7 @@ async def get_workflow(workflow_id: str):
         # Try to get from database
         workflow_data = await db.workflows.find_one({"id": workflow_id})
         if not workflow_data:
-            raise HTTPException(status_code=404, detail="Workflow not found")
+            raise HTTPException(status_code=404, detail=translate(lang, "workflow_not_found"))
         return serialize_doc(workflow_data)
     
     return workflow.dict()
@@ -860,7 +864,7 @@ async def list_workflows(active_only: bool = False):
     return {"workflows": workflows_data}
 
 @api_router.delete("/workflows/{workflow_id}")
-async def cancel_workflow(workflow_id: str):
+async def cancel_workflow(workflow_id: str, lang: str = "en"):
     """Cancel an active workflow"""
     global WORKFLOW_ENGINE
     if not WORKFLOW_ENGINE:
@@ -868,9 +872,9 @@ async def cancel_workflow(workflow_id: str):
     
     success = await WORKFLOW_ENGINE.cancel_workflow(workflow_id)
     if not success:
-        raise HTTPException(status_code=404, detail="Workflow not found or not active")
-    
-    return {"message": f"Workflow {workflow_id} cancelled"}
+        raise HTTPException(status_code=404, detail=translate(lang, "workflow_not_active"))
+
+    return {"message": translate(lang, "workflow_cancelled", workflow_id=workflow_id)}
 
 # Workflow Templates
 @api_router.get("/workflow-templates")
