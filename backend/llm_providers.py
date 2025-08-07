@@ -2,11 +2,25 @@ import os
 import logging
 from typing import Dict, Any, Optional, List
 from abc import ABC, abstractmethod
-import openai
-import anthropic
 from enum import Enum
 
 logger = logging.getLogger(__name__)
+
+try:
+    import openai
+except ImportError:
+    openai = None  # type: ignore[assignment]
+    logger.warning(
+        "openai package not installed. OpenAI provider will be unavailable."
+    )
+
+try:
+    import anthropic
+except ImportError:
+    anthropic = None  # type: ignore[assignment]
+    logger.warning(
+        "anthropic package not installed. Anthropic provider will be unavailable."
+    )
 
 class LLMProvider(str, Enum):
     OPENAI = "openai"
@@ -268,28 +282,41 @@ class LLMProviderManager:
     
     async def initialize_all_providers(self) -> Dict[LLMProvider, bool]:
         """Initialize all available providers"""
-        results = {}
-        
-        # Initialize OpenAI
-        openai_provider = OpenAIProvider()
-        results[LLMProvider.OPENAI] = await openai_provider.initialize()
-        if results[LLMProvider.OPENAI]:
-            self.providers[LLMProvider.OPENAI] = openai_provider
-        
-        # Initialize Anthropic
-        anthropic_provider = AnthropicProvider()
-        results[LLMProvider.ANTHROPIC] = await anthropic_provider.initialize()
-        if results[LLMProvider.ANTHROPIC]:
-            self.providers[LLMProvider.ANTHROPIC] = anthropic_provider
-        
+        results: Dict[LLMProvider, bool] = {}
+
+        # Initialize OpenAI if available
+        if openai is not None:
+            openai_provider = OpenAIProvider()
+            initialized = await openai_provider.initialize()
+            results[LLMProvider.OPENAI] = initialized
+            if initialized:
+                self.providers[LLMProvider.OPENAI] = openai_provider
+        else:
+            logger.warning("OpenAI provider skipped due to missing openai package")
+
+        # Initialize Anthropic if available
+        if anthropic is not None:
+            anthropic_provider = AnthropicProvider()
+            initialized = await anthropic_provider.initialize()
+            results[LLMProvider.ANTHROPIC] = initialized
+            if initialized:
+                self.providers[LLMProvider.ANTHROPIC] = anthropic_provider
+        else:
+            logger.warning(
+                "Anthropic provider skipped due to missing anthropic package"
+            )
+
         # Initialize Local (always available as fallback)
         local_provider = LocalProvider()
-        results[LLMProvider.LOCAL] = await local_provider.initialize()
-        if results[LLMProvider.LOCAL]:
+        initialized = await local_provider.initialize()
+        results[LLMProvider.LOCAL] = initialized
+        if initialized:
             self.providers[LLMProvider.LOCAL] = local_provider
-        
+
         self.initialized = True
-        logger.info(f"LLM Provider Manager initialized. Available providers: {list(self.providers.keys())}")
+        logger.info(
+            f"LLM Provider Manager initialized. Available providers: {list(self.providers.keys())}"
+        )
         return results
     
     def get_provider(self, provider_type: LLMProvider) -> Optional[BaseLLMProvider]:
