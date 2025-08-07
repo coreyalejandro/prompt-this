@@ -1,3 +1,4 @@
+from fastapi import FastAPI, Depends, HTTPException, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from dotenv import load_dotenv
@@ -20,6 +21,7 @@ sys.path.append(str(Path(__file__).parent))
 from llm_providers import LLMProviderManager, llm_manager
 from workflow_engine import WorkflowEngine, get_workflow_engine, Workflow, WorkflowStep
 from i18n import translate
+from feedback import router as feedback_router
 
 # Custom JSON encoder for MongoDB ObjectId
 from bson import ObjectId
@@ -961,43 +963,6 @@ async def get_session_history(session_id: str):
     # Serialize to handle ObjectId
     responses = [serialize_doc(response) for response in responses]
     return {"session_id": session_id, "responses": responses}
-from fastapi import APIRouter, HTTPException
-from app.models import FeedbackRequest, FeedbackResponse
-from app.services.llm_manager import llm_manager
-from app.logging import logger  # Use structured logging if available
-
-api_router = APIRouter()
-
-
-@api_router.post("/feedback", response_model=FeedbackResponse)
-async def generate_feedback(request: FeedbackRequest) -> FeedbackResponse:
-    """
-    Evaluate a user prompt and provide improvement suggestions using an LLM.
-    """
-    evaluation_prompt = (
-        "You are a helpful prompt engineer. Given the following prompt, "
-        "provide suggestions and improvement tips to make it clearer and more effective.\n\n"
-        f"Prompt:\n{request.prompt}"
-    )
-
-    try:
-        response = await llm_manager.generate_response(
-            provider_type=request.llm_provider,
-            prompt=evaluation_prompt,
-            max_tokens=300,
-            temperature=0.5,
-        )
-    except Exception as e:
-        logger.error("LLM response generation failed", extra={"error": str(e), "request": request.dict()})
-        raise HTTPException(status_code=500, detail="LLM failed to generate feedback.") from e
-
-    feedback_text = response.get("response", "").strip()
-    if not feedback_text:
-        logger.warning("Empty feedback response from LLM", extra={"request": request.dict()})
-        raise HTTPException(status_code=502, detail="Received empty feedback from LLM.")
-
-    return FeedbackResponse(feedback=feedback_text)
-
 
 # Workflow API Endpoints
 @api_router.post("/workflows")
@@ -1227,6 +1192,7 @@ except Exception:  # pragma: no cover - fallback when package missing
 
 # Include router
 app.include_router(api_router)
+app.include_router(feedback_router)
 
 # Initialize agents on startup
 @app.on_event("startup")
